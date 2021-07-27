@@ -13,17 +13,18 @@ class Api::V1::AuthController < ApplicationController
         else
             response_obj.message = "there was an issue logging in. please try again"
         end
-        response_obj
+        render json: response_obj
     end
     def log_out
-    end
         user = ''
         response_obj = {
             message: "user is logged out",
             status: 200
         }
        
-        response_obj
+        render json: response_obj
+    end
+      
     def new
     end
     def index

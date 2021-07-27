@@ -10,7 +10,8 @@ class Api::V1::UsersController < Api::V1::AuthController
     def show
         @user = User.find_by(:username, user_params[:user][:username])
         if @user.authenticate(user_params[:user][:password]) 
-            render json: @user
+            token = Token.build_token(@user.id)
+            render json: {user: @user, token: token}
         end
     end
     def update
@@ -18,7 +19,8 @@ class Api::V1::UsersController < Api::V1::AuthController
     def create
         @user = User.new(user_params)
         if @user.save!
-            render json: @user
+            token = Token.build_token(@user.id)
+            render json: {user: @user, token: token}
         else
             render json: {status: 401, body: "oops"}
         end

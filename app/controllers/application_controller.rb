@@ -13,11 +13,16 @@ class ApplicationController < ActionController::Base
         contains_valid_token?(header)
     end
     def contains_valid_token?(header)
-        if header.token && Token.validate_token(header.token)
+        validated_token = Token.validate_token(header.token)
+        if validated_token
+            @user = User.find(validated_token.data.userid)
             render json: {message: 'token is valid'}
         end
     end
     def require_admin
 
+    end
+    def current_user
+        @user || 'anon'
     end
 end
