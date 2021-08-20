@@ -1,5 +1,7 @@
 class Api::V1::UsersController < Api::V1::AuthController
-    skip_before_action :require_token, :only => [:create, :index]
+    skip_before_action :require_token, :only => [:create]
+    
+    include Token
     def new
         @user = User.new(user_params)
     end
@@ -17,13 +19,17 @@ class Api::V1::UsersController < Api::V1::AuthController
     def update
     end
     def create
+        respond_to :html, :json, :xml
         @user = User.new(user_params)
         if @user.save!
-            token = Token.build_token(@user.id)
+            token = build_token(@user.id)
             render json: {user: @user, token: token}
         else
             render json: {status: 401, body: "oops"}
         end
+        rescue
+            render json: {status: 401, body: 'very bad'}
+
     end
     private
         def user_params

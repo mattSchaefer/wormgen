@@ -13,3 +13,17 @@
  *= require_tree .
  *= require_self
  */
+.mainImgBG{
+    background-image: url('worm_27.png') !important;
+    height: 60vh;
+    background-repeat: no-repeat;
+    background-color: black;
+    background-position: right;
+}
+.flex-col{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+hr{margin-top: 4rem !important;}

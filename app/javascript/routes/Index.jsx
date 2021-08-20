@@ -4,7 +4,6 @@ import Home from "../components/Home";
 import Header from "../components/Header";
 export default (
     <Router>
-        <Header />
         <Switch>
             <Route path="/" exact component={Home} />
 
