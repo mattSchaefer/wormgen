@@ -9,9 +9,9 @@ class Api::V1::AuthController < ApplicationController
            
             token = build_token(user.id)
             
-            response_obj = {message: 'SUCCESS', user: user, token: token}
+            response_obj = {message: 'SUCCESS', user: user, token: token, status: 200}
         else
-            response_obj= {message: "there was an issue logging in. please try again"}
+            response_obj= {message: "there was an issue logging in. please try again", status: 500}
         end
         rescue
             render json: {status: 401, body: 'very bad'}

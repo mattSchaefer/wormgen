@@ -56,10 +56,10 @@ export default () => (
             </div>
         </div>
         <div>
-            <Link>mission statement</Link>
+           
         </div>
         <div>
-            <Link>about the site</Link>
+            
         </div>
         <div>
 
