@@ -7,7 +7,6 @@ const flexWrap = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
     flexWrap: 'wrap',
 }
 export default class WormList extends React.Component{
@@ -37,13 +36,13 @@ export default class WormList extends React.Component{
     }
     render(){
         const worms = this.state.worm_list;
-        const listOfWorms = worms.map((worm) => 
+        const listOfWorms = worms.reverse().map((worm) => 
              
-                <Worm key={worm.id} src={worm.data_url} name={worm.name} />
+                <Worm key={worm.id} src={worm.data_url} name={worm.name} author={worm.user_id} date={worm.created_at} />
             
         )
         return(
-            <div style={flexWrap}>
+            <div style={flexWrap} id="mainWormList">
                 { 
                     listOfWorms
                 }

@@ -20,9 +20,36 @@
     background-color: black;
     background-position: right;
 }
+.no-rice-bg{
+    background-image: url('no_rice.png') !important;
+    width: 16vh;
+    height: 9em;
+    background-position: center;
+    background-size: cover;
+    border-radius: 88px;
+}
+.no-trees-bg{
+    background-image: url('no_trees.jpg') !important;
+    width: 16vh;
+    height: 9em;
+    background-position: center;
+    background-size: cover;
+    border-radius: 88px;
+}
+.yes-worm-bg{
+    background-image: url('worm_yes.png') !important;
+    width: 16vh;
+    height: 9em;
+    background-position: center;
+    background-size: cover;
+    border-radius: 88px;
+}
 .flex-col{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+main{
+    display: none;
 }

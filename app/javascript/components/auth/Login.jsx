@@ -9,7 +9,7 @@ require('isomorphic-fetch');
 const hunnitHeight = {
     height: "100%"
 }
-const justFlex = {display: "flex", minHeight: '56vh',}
+const justFlex = {display: "flex", minHeight: '18rem',}
 const flexColumn = {
     display: "flex",
     flexDirection: "column",
@@ -20,13 +20,20 @@ const logInSignUp = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '9em',
+    width: '11em',
     padding: '5px 12px',
-    border: '2px solid black',
+    color: '#eee',
     borderRadius: '30px',
     cursor: 'pointer',
 }
 const submitButton = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    marginTop: '1em',
+    marginBottom: '2em',
+}
+const tryAgainButton = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
@@ -58,7 +65,6 @@ const signUpTextContainer = {
     justifyContent: 'center',
     alignItems: 'center',
     width: '-webkit-fill-available',
-    borderLeft: '1px solid grey',
     borderRadius: '3px',
 }
 const formContainer = {
@@ -97,36 +103,92 @@ export default class Login extends React.Component{
 
     }
     formSubmit(){
-        const url = "/api/v1/users";
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        const options = {
-            method: 'POST',
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password
-            }),
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        }
-        const signUp = () => {
-            this.setState({requestStarted: true, requestPending: true})
-            fetch(url, options)
-                .then((response) => response.json())
-                .then((json)=> {
-                    console.log(json)
-                    this.setState({
-                        requestPending: false,
-                        requestFinished: true,
-                        requestResponse: json,
-                        requestStarted: false
+        if(this.state.action == 'signup'){
+            const url = "/api/v1/users";
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password
+                }),
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+            }
+            const signUp = () => {
+                this.setState({requestStarted: true, requestPending: true})
+                fetch(url, options)
+                    .then((response) => response.json())
+                    .then((json)=> {
+                        console.log(json)
+                        this.setState({
+                            requestPending: false,
+                            requestFinished: true,
+                            requestResponse: json,
+                            requestStarted: false
+                        })
                     })
-                })
-                .catch((e)=>console.log(e))
+                    .catch((e)=>{
+                        console.log(e)
+                        this.setState({
+                            requestPending: false,
+                            requestFinished: true,
+                            requestResponse: e,
+                            requestStarted: false
+                        })
+                    })
+            }
+            signUp();
+        }else{
+            const url = "/api/v1/login";
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                }),
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+            }
+            const logIn = () => {
+                this.setState({requestStarted: true, requestPending: true})
+                fetch(url, options)
+                    .then((response) => response.json())
+                    .then((json)=> {
+                        console.log(json)
+                        this.setState({
+                            requestPending: false,
+                            requestFinished: true,
+                            requestResponse: json,
+                            requestStarted: false
+                        });
+                    })
+                    .catch((e)=>{
+                        console.log(e)
+                        this.setState({
+                            requestPending: false,
+                            requestFinished: true,
+                            requestResponse: e,
+                            requestStarted: false
+                        })
+                    })
+            }
+            logIn();
         }
-        signUp();
+    }
+    tryAgain(){
+        this.setState({
+            action: 'signup',
+            requestPending: false,
+            requestStarted: false,
+            requestFinished: false,
+            sectionCollapsed: false,
+            activeHover: "",
+            requestResponse: {},
+        });
     }
     logInSignUpClick(event, which){
         this.setState({action: which});
@@ -153,7 +215,7 @@ export default class Login extends React.Component{
                         <div style={logInSignUp}>
                             <div onClick={(e) => this.logInSignUpClick(e, 'login')} onMouseEnter={(e) => this.logInSignUpHover(e, 'login')} onMouseLeave={(e) => this.noMoreHover()}>
                                 <span style={this.state.action == 'login' ? strongStyle : this.state.activeHover == 'login' ? hoverButtonStyle : {}} onClick={(e) => this.logInSignUpClick(e, 'login')}> 
-                                    Log In
+                                    Log On
                                 </span>
                             </div>
                             <span>/</span>
@@ -238,17 +300,24 @@ export default class Login extends React.Component{
                                 this.state.requestFinished && this.state.requestResponse.status != 200 &&
                                 <div style={red}>
                                     error with credentials
-
+                                    <Button id="try-again" variant="contained" color="primary" style={tryAgainButton} onClick={()=>this.tryAgain()}>Try Again</Button>
                                 </div>
                             }
                             {
-                                this.state.requestFinished && this.state.requestResponse.status == 200 && 
+                                this.state.requestFinished && this.state.requestResponse.status == 200 && this.state.action == 'signup' &&
                                 <div>
                                     <h3>Thanks for signing up, {this.state.requestResponse.user.username}.</h3>
                                     <p>Hope you hang for a while and generate many worms.</p>
                                 </div>
                             }
-                            
+                            {
+                                this.state.requestFinished && this.state.requestResponse.status == 200 && this.state.action == 'login' &&
+                                <div>
+                                    <h3>Welcome back, {this.state.requestResponse.user.username}.</h3>
+                                    <p>Generate Worms</p>
+                                    <p>Account Details</p>
+                                </div>
+                            }
                         </div>
                     
                     </div>

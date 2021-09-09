@@ -17,6 +17,7 @@ class Api::V1::UsersController < Api::V1::AuthController
         end
     end
     def update
+        @user.save(user_params)
     end
     def create
         respond_to :html, :json, :xml

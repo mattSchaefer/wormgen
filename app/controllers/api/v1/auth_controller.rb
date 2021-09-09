@@ -1,31 +1,31 @@
 class Api::V1::AuthController < ApplicationController
     
-    skip_before_action :verify_authenticity_token, :require_token, :only => [:login,:check_for_token, :contains_valid_token?]
+    skip_before_action :require_token, :only => [:login,:check_for_token, :contains_valid_token?]
     include Token
     def login
-        
+        respond_to :html, :json, :xml
         user = User.find_by(username: auth_params[:username])
         if user && user.authenticate(auth_params[:password])
            
             token = build_token(user.id)
             
-            response_obj = {message: 'SUCCESS', user: user, token: token, status: 200}
+            render json: {message: 'SUCCESS', user: user, token: token, status: 200}
         else
-            response_obj= {message: "there was an issue logging in. please try again", status: 500}
+            render json: {message: "there was an issue logging in. please try again", status: 500}
         end
         rescue
             render json: {status: 401, body: 'very bad'}
-        render json: response_obj
     end
     def log_out
+        respond_to :html, :json, :xml
         user = ''
-        response_obj = {
+        render json: {
             message: "user is logged out",
             status: 200
         }
         rescue
             render json: {status: 401, body: 'very bad'}
-        render json: response_obj
+       
     end
       
     def new
