@@ -56,18 +56,23 @@ export default function Worm(props){
         <div style={ props.src ? flex : {}}>
             { props.src && 
             <span style={wormContainer}>
-                <img src={props.src} style={wormStyle}></img>
+                <img src={props.src} style={wormStyle} download></img>
+                
                 <div style={wormInfoContainer}>
                     <p style={Object.assign({},wormTitle, wormAttr)}>{props.name}</p>
                     <span style={nonTitleWormAttrs}>
-                        <p style={wormAttr}>
-                            {props.author == 33 ? 'artist unknown.' : props.author}
-                        </p>
+                        <span>
+                            <p style={wormAttr}>
+                                {props.author == 33 ? 'artist unknown.' : props.author}
+                            </p>
+                            
+                        </span>
                         <p style={wormAttr}>
                             <span style={italics}>
                                 c.a. {props.date.substring(0, props.date.indexOf('T'))} a.d.
                             </span>
                         </p>
+                        <a href={props.src} download={props.name}>Export Worm</a>
                     </span>
                 </div>
             </span>

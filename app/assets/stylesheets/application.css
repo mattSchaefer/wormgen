@@ -53,3 +53,7 @@
 main{
     display: none;
 }
+.p5Canvas{
+    border-radius: 7px;
+    border: 2px solid #eee;
+}
