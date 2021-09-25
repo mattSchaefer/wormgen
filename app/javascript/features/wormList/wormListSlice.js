@@ -36,14 +36,9 @@ export async function fetchWorms(dispatch){
                 .then((response) => response.json())
                 .then((json) => {
                     console.log(json);
-                    dispatch(addMultiWormsToList(json.worms))
-                    //state.wormList.worms.concat(json.worms)
                     if (json.status !== 500){
-                        //state.worms.concat(json.worms);
-
-                        //dispatch({type: 'wormList/addMultiWormsToList', payload: json.worms});
-                        //return json.worms;
                         
+                        dispatch(addMultiWormsToList(json.worms))
                     } 
                 })
                 .catch((error) => {

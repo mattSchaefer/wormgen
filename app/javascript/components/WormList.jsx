@@ -55,15 +55,19 @@ export default function WormList(props){
         //useStore(store);
         //const worms = store.dispatch(fetchWorms);
         //store.dispatch(addMultiWormsToList, worms);
+        const dispatch = useDispatch();
+            
+        useEffect( () =>{
+            dispatch(fetchWorms);
+        },[worms]);
         var wormsList = useSelector(worms);
         //const wormsList = store.getState().wormList.worms;
         var listOfWorms = [];
         var wormsListCopy = Array.from(wormsList); 
-        const dispatch = useDispatch();
-        dispatch(fetchWorms);
-        console.log(store.getState());
-        console.log("wormsList \n");
-        console.log(wormsList);
+        
+        // console.log(store.getState());
+        // console.log("wormsList \n");
+        // console.log(wormsList);
         if( wormsListCopy.length > 0){
             listOfWorms = wormsListCopy.reverse().map((worm) => 
             

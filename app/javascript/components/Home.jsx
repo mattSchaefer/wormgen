@@ -281,10 +281,11 @@ export default function Home(props){
     var myRef = React.createRef();
     var myP5 = new P5(Sketch, myRef.current)
     //useEffect(() => fetchWorms);
-    
+   
     //const store = useStore();
       return ( 
         <Provider store={store}>
+            
         <div >
             <div className="mainImgBG flex-col">
              <Header />
