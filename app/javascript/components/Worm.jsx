@@ -57,7 +57,6 @@ export default function Worm(props){
             { props.src && 
             <span style={wormContainer}>
                 <img src={props.src} style={wormStyle} download></img>
-                
                 <div style={wormInfoContainer}>
                     <p style={Object.assign({},wormTitle, wormAttr)}>{props.name}</p>
                     <span style={nonTitleWormAttrs}>
@@ -65,7 +64,6 @@ export default function Worm(props){
                             <p style={wormAttr}>
                                 {props.author == 33 ? 'artist unknown.' : props.author}
                             </p>
-                            
                         </span>
                         <p style={wormAttr}>
                             <span style={italics}>

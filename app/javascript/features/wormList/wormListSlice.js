@@ -21,11 +21,7 @@ export const wormListSlice = createSlice({
             state.worms.push(action.payload);
         },
         addMultiWormsToList: (state, action) => {
-            console.log("inside addmultiwormstolist reducer ");
-            console.log(action.payload);
             state.worms = action.payload;
-            console.log("state.worms from reducer \n")
-            console.log(state.worms);
         },
     },
 })
@@ -37,7 +33,6 @@ export async function fetchWorms(dispatch){
                 .then((json) => {
                     console.log(json);
                     if (json.status !== 500){
-                        
                         dispatch(addMultiWormsToList(json.worms))
                     } 
                 })

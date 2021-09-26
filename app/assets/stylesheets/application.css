@@ -57,3 +57,14 @@ main{
     border-radius: 7px;
     border: 2px solid #eee;
 }
+.MuiButton-containedPrimary{
+    background-color: #eee !important;
+    color: black !important;
+}
+.MuiInputBase-input{
+    color: #eee !important;
+    border-bottom: 2px solid #eee !important;
+}
+.MuiInputLabel-animated{
+    color: #eee !important;
+}
