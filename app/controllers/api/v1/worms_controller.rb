@@ -3,9 +3,26 @@ class Api::V1::WormsController < ApplicationController
     protect_from_forgery with: :null_session
     def index
         @worms = Worm.order(created_at: :asc)
+        @worms_copy = []
         if @worms.length > 0
+            @worms.each do |worm|
+                user = {
+                    user_id: worm.user_id,
+                    username: User.find(worm.user_id).username
+                } 
+                @worm_hold = {id:"", user_id: "", user_obj: {user_id: "", username: ""}, favorited_by: "", created_at: "", data_url: "", name: ""}
+                @worm_hold[:id] = worm.id
+                @worm_hold[:user_id] = worm.user_id
+                @worm_hold[:user_obj] = user
+                @worm_hold[:favorited_by] = worm.favorited_by
+                @worm_hold[:created_at] = worm.created_at
+                @worm_hold[:data_url] = worm.data_url
+                @worm_hold[:name] = worm.name
+                @worms_copy.push(@worm_hold)
+            
+            end
             render json: {
-                worms: @worms,
+                worms: @worms_copy,
                 status: 200,
                 message: "here's the worms"
             }

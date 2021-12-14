@@ -85,7 +85,7 @@ export default function WormList(props){
     // }
     if(wormsListCopy2.length > 0){
         listOfWorms2 = wormsListCopy2.map((worm, index) => 
-            <Worm key={worm.id} src={worm.data_url} name={worm.name} author={worm.user_id} date={worm.created_at} favorited_by={worm.favorited_by} id={"worm_" + worm.id} wormID={worm.id} totalLen={wormsList.length} index={index} />
+            <Worm key={worm.id} src={worm.data_url} name={worm.name} author={worm.user_id} date={worm.created_at} favorited_by={worm.favorited_by} id={"worm_" + worm.id} wormID={worm.id} totalLen={wormsList.length} index={index} username={worm.user_obj.username} />
         )
     }
     return(

@@ -85,11 +85,13 @@ const redFill = {
     color: '#aa2e25',
     background: '##aa2e25',
     zIndex: '100',
+    cursor: 'pointer',
 }
 const redOutline = {
     color: '#aa2e25',
     background: '##aa2e25',
     zIndex: '100',
+    cursor: 'pointer',
 }
 const bigworm = {
     position: 'fixed',
@@ -179,7 +181,7 @@ export default function Worm(props){
                         <span>
                             <span>
                                 <p style={wormAttr}>
-                                    {props.author == 33 ? 'artist unknown.' : props.author}
+                                    {props.author == 33 ? 'artist unknown.' : props.username}
                                 </p>
                             </span>
                             <p style={wormAttr}>
