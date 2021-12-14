@@ -1,5 +1,5 @@
 class Api::V1::AuthController < ApplicationController
-    
+    protect_from_forgery with: :null_session
     skip_before_action :require_token, :only => [:login,:check_for_token, :contains_valid_token?]
     include Token
     def login
@@ -36,6 +36,6 @@ class Api::V1::AuthController < ApplicationController
     end
     private
         def auth_params
-            params.permit(:username, :password)
+            params.permit(:username, :password, :auth)
         end
 end

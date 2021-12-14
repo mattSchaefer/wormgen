@@ -1,7 +1,7 @@
 import { Row } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Login from './auth/Login';
+import Login from './Login';
 import { Button, Textfield } from '@material-ui/core';
 // import './bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/popper.min.js';
@@ -32,7 +32,8 @@ const rowFlexCenter = {
     alignItems: "center",
 }
 const white = {
-    color: '#eee'
+    color: '#eee',
+    fontSize: '7rem !important',
 }
 const borderWhite = {
     border: '2px solid #eee'

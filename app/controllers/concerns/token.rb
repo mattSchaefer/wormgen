@@ -1,4 +1,4 @@
-module Token 
+module Token
     extend ActiveSupport::Concern
     def build_token(data)
         secret = self.secret

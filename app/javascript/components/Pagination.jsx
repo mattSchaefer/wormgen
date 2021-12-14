@@ -1,0 +1,59 @@
+import React from 'react';
+import { Button } from '@material-ui/core';
+import { useDispatch, useEffect, useSelector } from 'react-redux';
+import { changePage } from '../features/wormList/wormListSlice';
+import { animateScroll as scroll, scrollSpy, scroller, Events, Element, Link } from 'react-scroll';
+import { view, current_page } from '../features/wormList/wormListSlice';
+const paginationButton = {background: "#eee", border: '2px solid #eee',}
+const currentPageSpan = {color: '#eee',}
+const carouselPaginateSpan = {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+}
+const listPaginateSpan = {}
+export default function(props){ 
+    var num_pages = props.total_pages
+    const dispatch = useDispatch()
+    const wormListView = useSelector(view)
+    var currentWormPage = useSelector(current_page)
+    var curr_worm_min_1 = currentWormPage - 1
+    var curr_worm_plus_1 = currentWormPage + 1
+    var pagination_buttons = []
+    var pagination_button_indexes = []
+    for(var i = 1; i < num_pages; i++){
+        pagination_button_indexes.push(i)
+    }
+    if(pagination_button_indexes.length > 0 && wormListView == 'list'){
+        pagination_buttons = pagination_button_indexes.map((index)=>
+            <Button key={index} onClick={() => changeThePageAndScroll(index)} style={paginationButton}>{index}</Button>
+        )
+    }else{
+        pagination_buttons = [
+            <Button onClick={() => changeThePageAndScroll(curr_worm_min_1)} style={paginationButton}>{'<<<'}</Button>,
+            <Button onClick={() => changeThePageAndScroll(curr_worm_plus_1)} style={paginationButton}>{'>>>'}</Button>
+        ]
+    }
+    function changeThePageAndScroll(index){
+        var options = {
+            smooth: 'easeInOutQuint',
+            duration: 336,
+            delay: 75,
+            offset: -65,
+            isDynamic: true
+        }
+       dispatch(changePage(index))
+        setTimeout(() => scroller.scrollTo("wormGallHead", options), 100)
+    }
+    return(
+        <span>
+            <span style={wormListView == 'list' ? listPaginateSpan : carouselPaginateSpan }>
+                {wormListView == 'list' && pagination_buttons}
+                {wormListView != 'list' && pagination_buttons}
+            </span>
+            {pagination_buttons.length > 0 && <p style={currentPageSpan}>current page: {props.current_page} total page: {props.total_pages - 1}</p>}
+            
+        </span>
+    )
+}

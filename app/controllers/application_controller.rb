@@ -7,16 +7,17 @@ class ApplicationController < ActionController::Base
             render json: {status: 401, message: 'unauthorized'}
             return
         end
-        check_for_token(request.headers['Authorization']) 
+        contains_valid_token?(request.headers['Authorization']) 
     end
     def check_for_token(header)
         contains_valid_token?(header)
     end
     def contains_valid_token?(header)
-        validated_token = Token.validate_token(header.token)
+        token = header.split(' ').last
+        validated_token = validate_token(token)
         if validated_token
-            @user = User.find(validated_token.data.userid)
-            render json: {message: 'token is valid'}
+        else
+            render json: {message: 'theres been an issue'}    
         end
     end
     def require_admin
