@@ -8,12 +8,13 @@ export const authSlice = createSlice({
         current_user_id: 0,
         requestPending: false,
         requestFinished: false,
-        requestResponse: {hold: 'hold'},
+        requestResponse: {hold: 'hold', status: 0},
         requestStarted: false,
         displayedSection: 'signup',
         sectionCollapsed: false,
         activeHover: "",
         signupError: 'no',
+        loginError: 'no',
         userProfileUiEditEmailExpanded: 'no',
         userProfileUiChangePasswordExpanded: 'no',
     },
@@ -74,11 +75,13 @@ export const authSlice = createSlice({
             state.requestStarted = true;
             state.requestPending = true;
         },
-        logInFailure: (state) => {
+        logInFailure: (state, action) => {
             state.requestPending = false;
             state.requestFinished = true;
             state.requestResponse = action.payload;
             state.requestStarted = false;
+            state.loginError = 'yes';
+            state.current_user = "anon";
         },
         signUpFailure: (state, action) => {
             state.requestPending = false;
@@ -86,6 +89,7 @@ export const authSlice = createSlice({
             state.requestStarted = false;
             state.requestResponse = action.payload;
             state.signupError = 'yes';
+            state.current_user = 'anon';
         },
         updateUserFailure: (state, action) => {
             state.requestPending = false;
@@ -120,9 +124,7 @@ export async function login(dispatch){
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
-            console.log("async login() json")
-            console.log(json)
-            dispatch(loggedInUser(json))
+            json.status == 200 ? dispatch(loggedInUser(json)) : dispatch(logInFailure(json))
         })
         .catch((e)=>{
             console.log(e)
@@ -191,5 +193,5 @@ export const current_user = state => state.auth.current_user;
 export const current_user_token = state => state.auth.current_user_token;
 export const current_user_id = state => state.auth.current_user_id;
 export const requestResponse = state => state.auth.requestResponse;
-export const { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollapsed, loggedInUser, signedUpUser, updatedUser, requestStarted, signUpFailure, toggleUserProfileUiEditEmail, toggleUserProfileUiChangePassword } = authSlice.actions;
+export const { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollapsed, loggedInUser, signedUpUser, updatedUser, requestStarted, signUpFailure, logInFailure, toggleUserProfileUiEditEmail, toggleUserProfileUiChangePassword } = authSlice.actions;
 export const authState = state => state.auth;

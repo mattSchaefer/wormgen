@@ -133,6 +133,9 @@ const underline = {
 const flex = {
     display: 'flex',
 }
+const errorMessage = {
+    color: 'red',
+}
 export default function Login(props){
     const dispatch = useDispatch();
     const state = useSelector(authState);
@@ -226,7 +229,7 @@ export default function Login(props){
             {state.sectionCollapsed}
             <div style={flexRowJusBet} id="header-bar">
                 {
-                    state.current_user == 'anon' &&
+                    (!state.requestFinished || state.requestResponse.status !== 200) &&
                     <div style={logInSignUp}>
                         <div onClick={(e) => logInSignUpClick1(e, 'login')} onMouseEnter={(e) => logInSignUpHover(e, 'login')} onMouseLeave={(e) => noMoreHover()}>
                             <span style={state.displayedSection == 'login' ? strongStyle : state.activeHover == 'login' ? hoverButtonStyle : {}} onClick={(e) => logInSignUpClick1(e, 'login')}> 
@@ -283,17 +286,22 @@ export default function Login(props){
             {
                 !state.sectionCollapsed &&
                 <div style={flexBet}>
-                    {
-                        state.requestResponse && !state.requestResponse.status !== 200 && state.current_user == 'anon' &&
+                   {    (!state.requestFinished || state.requestResponse.status !== 200) &&
                         <div style={formContainer}>
+                            {state.signupError == 'yes' || state.loginError == 'yes' &&
+                                <div>
+                                    <h6 style={errorMessage} >There was an issue with those credentials.</h6>
+                                    <h6 style={errorMessage}>Please try again.</h6>
+                                </div>
+                            }
                             <form autoComplete="off" style={formStyle}>
                                 <span style={Object.assign({}, flexColumn, formStyle)}>
-                                    <TextField id="username" label="Username" style={fillContainer} error={ state.signupError == 'yes' && document.getElementById('username').value.length == 0} />
+                                    <TextField id="username" label="Username" style={fillContainer} error={ state.signupError == 'yes' || state.loginError == 'yes'} />
                                     {
                                         state.displayedSection == 'signup' &&
-                                        <TextField id="email" label="Email" style={fillContainer} error={state.signupError == 'yes' && document.getElementById('email').value.length == 0} />
+                                        <TextField id="email" label="Email" style={fillContainer} error={state.signupError == 'yes'} />
                                     }
-                                    <TextField id="password" label="Password" error={state.signupError == 'yes'} type="password" style={fillContainer} />
+                                    <TextField id="password" label="Password" error={state.signupError == 'yes' || state.loginError == 'yes'} type="password" style={fillContainer} />
                                     {
                                         state.displayedSection == 'signup' &&
                                         <TextField id="password-confirm" label="Password Confirmation" type="password" error={state.signupError == 'yes'} style={fillContainer} />
@@ -306,17 +314,17 @@ export default function Login(props){
                     }
                     <div style={signUpTextContainer}>
                         { 
-                            (!state.requestPending && !state.requestFinished) &&
+                            ((!state.requestPending && !state.requestFinished) || state.requestResponse.status !== 200)  &&
                             <div>
                             {
-                                ( state.displayedSection == 'signup' && !state.requestFinished) && 
+                                ( state.displayedSection == 'signup' && (!state.requestFinished || state.requestResponse.status !== 200)) && 
                                 <div style={flexColCenter}>
                                     <h3>Sign Up</h3>
                                     <p style={centerPg}>Create and publish worms on our platform.  Comment on worms.  Submit your worm to be a featured worm on our platform and on social media!</p>
                                 </div>
                             }
                             {
-                                (  state.displayedSection == 'login' && !state.requestFinished) && 
+                                (  state.displayedSection == 'login' && (!state.requestFinished || state.requestResponse.status !== 200)) && 
                                 <div style={flexColCenter}>
                                 <h3>Log On</h3>
                                     <p style={centerPg}>Log on with us and get to the good stuff.  Thanks for coming back.</p>
@@ -327,13 +335,6 @@ export default function Login(props){
                         {
                             state.requestPending &&
                             <div>loading animation..</div>
-                        }
-                        {
-                            state.requestFinished && state.requestResponse.status != 200 &&
-                            <div style={red}>
-                                error with credentials
-                                
-                            </div>
                         }
                         {
                             state.requestFinished && state.requestResponse.status == 200 && state.displayedSection == 'signup' &&

@@ -33,7 +33,7 @@ const mainImgBG = {
     backgroundImage: "url('worm_27.png') !important",
 }
 const backgroundGrey = {
-    backgroundColor: '#232d3d',
+    backgroundColor: 'black',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',

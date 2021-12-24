@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_04_204055) do
+ActiveRecord::Schema.define(version: 2021_12_16_220443) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -49,6 +49,9 @@ ActiveRecord::Schema.define(version: 2021_11_04_204055) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "admin", default: false
     t.string "favorite_worms"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.string "unconfirmed_emil"
   end
 
   create_table "worms", force: :cascade do |t|

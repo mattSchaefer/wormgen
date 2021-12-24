@@ -3,6 +3,7 @@ import { TextField, TextArea, Button } from '@material-ui/core';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
+import FreeBreakfastIcon from '@material-ui/icons/FreeBreakfast';
 import { animateScroll as scroll, scrollSpy, scroller, Events } from 'react-scroll';
 import { current_user, current_user_token, current_user_id } from '../features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -62,7 +63,7 @@ export default function Footer(props){
                             <TwitterIcon className="actually-link" />
                         </span>
                         <span>
-                            <p className="actually-link">Send me crypto? :D</p>
+                            <FreeBreakfastIcon className="actually-link" />
                         </span>
                     </div>
                 </div>

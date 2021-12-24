@@ -21,7 +21,17 @@ module Token
         rescue
             'unable to validate token'
     end
-   
+    def authorize_token(token, user_id)
+        decoded = decode_token(token)
+        expired = DateTime.now.to_i > decoded[0]['exp']
+        return_data = {expired: expired, decoded: decoded}
+        if decoded == user_id
+            return_data = {message: 'authorized'}
+        else
+            return_data = {message: 'not authorized'}
+        end
+        return_data
+    end
     def secret
         Rails.application.secrets.secret_key_base
     end

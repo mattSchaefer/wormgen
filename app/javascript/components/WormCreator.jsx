@@ -18,7 +18,7 @@ const buttonContainer = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     marginTop: '1.5em',
 }
 const saveWormButton = {

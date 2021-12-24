@@ -3,6 +3,7 @@ import wormListReducer from '../features/wormList/wormListSlice';
 import authReducer from '../features/auth/authSlice';
 import aboutReducer from '../features/about/aboutUsSlice';
 import contactReducer from '../features/contact/contactSlice';
+import userProfileReducer from '../features/userProfile/userProfileSlice';
 import thunkMiddleware from 'redux-thunk';
 import { applyMiddleware } from 'redux';
 import { composedWithDevTools } from 'redux-devtools-extension';
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
         wormList: wormListReducer, 
         auth: authReducer,
         about: aboutReducer,
-        contact: contactReducer
+        contact: contactReducer,
+        userProfile: userProfileReducer,
     });
 export default configureStore({
     reducer: rootReducer,
