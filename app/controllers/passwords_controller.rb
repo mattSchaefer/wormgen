@@ -7,9 +7,13 @@ class PasswordsController < ApplicationController
         end
         user = User.find_by(email: pword_params[:email].downcase)
         if user.present?
-            user.generate_password_token!
-            #send email with instructions and link containing password token, which is used to hit the 'reset' endpoint and query the user, and is validated before the password is reset
-            render json: {status: 'ok'}, status: :ok
+            user.reset_password_token = SecureRandom.hex(10)
+            user.reset_password_sent_at = Time.now.utc
+            if user.save!
+                @reset_token = user.reset_password_token
+                UserMailer.with(forgot_token: @reset_token, email: pword_params[:email]).forgot_password_email.deliver_later
+                render json: {status: 'ok'}, status: :ok
+            end
         else
             render json: {error: ['Email address not found. Please check and try again.']}, status: :not_found
         end

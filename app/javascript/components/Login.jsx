@@ -307,7 +307,12 @@ export default function Login(props){
                                         <TextField id="password-confirm" label="Password Confirmation" type="password" error={state.signupError == 'yes'} style={fillContainer} />
                                     }
                                     <Button id="form-submit" variant="contained" color="primary" style={submitButton} onClick={()=>formSubmit()}>Submit</Button>
-                                    {state.displayedSection == 'login' && <span>forgot your password?  too bad.</span>}
+                                    { (!state.requestFinished || state.requestResponse.status !== 200) && 
+                                        <span>
+                                            <span class="actually-link">forgot password</span>
+                                            <span class="actually-link">reset password</span>
+                                        </span>
+                                    }
                                 </span>
                             </form>
                         </div>
