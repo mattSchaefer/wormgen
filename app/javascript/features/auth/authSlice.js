@@ -15,8 +15,8 @@ export const authSlice = createSlice({
         activeHover: "",
         signupError: 'no',
         loginError: 'no',
-        userProfileUiEditEmailExpanded: 'no',
-        userProfileUiChangePasswordExpanded: 'no',
+        user_is_activated: 'no'
+        
     },
     reducers: {
         loggedInUser: (state, action) => {
@@ -26,6 +26,7 @@ export const authSlice = createSlice({
             action.payload.user ? state.current_user = action.payload.user.username : state.current_user = "anon"
             action.payload.user ? state.current_user_id = action.payload.user.id : state.current_user = 0
             action.payload.token? state.current_user_token = action.payload.token.token: state.current_user_token = "";
+            action.payload.user.activated ? state.user_is_activated = "yes" : state.user_is_activated = "no";
             state.requestStarted = false;  
         },
         signedUpUser: (state, action) => {
@@ -82,6 +83,7 @@ export const authSlice = createSlice({
             state.requestStarted = false;
             state.loginError = 'yes';
             state.current_user = "anon";
+            state.user_is_activated = 'no';
         },
         signUpFailure: (state, action) => {
             state.requestPending = false;
@@ -90,6 +92,7 @@ export const authSlice = createSlice({
             state.requestResponse = action.payload;
             state.signupError = 'yes';
             state.current_user = 'anon';
+            state.user_is_activated = 'no';
         },
         updateUserFailure: (state, action) => {
             state.requestPending = false;
@@ -110,24 +113,23 @@ export async function login(dispatch){
     const url = "/api/v1/login";
     const username = document.getElementById('username').value
     const password = document.getElementById('password').value
+    const csrf =  document.querySelector('meta[name="csrf-token"]').content
     const options = {
         method: 'POST',
         body: JSON.stringify({
             username: username,
             password: password
         }),
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json','X-CSRF-Token': csrf}
     }
-    console.log("async login() request body");
-    console.log(options)
     dispatch(requestStarted)
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
+            console.log(json)
             json.status == 200 ? dispatch(loggedInUser(json)) : dispatch(logInFailure(json))
         })
         .catch((e)=>{
-            console.log(e)
             dispatch(logInFailure(e))
             return e;
         })
@@ -137,6 +139,7 @@ export async function signup(dispatch){
     const username = document.getElementById('username').value
     const password = document.getElementById('password').value
     const email = document.getElementById('email').value
+    const csrf =  document.querySelector('meta[name="csrf-token"]').content
     const body = JSON.stringify({
         username: username,
         email: email,
@@ -145,7 +148,7 @@ export async function signup(dispatch){
     const options = {
         method: 'POST',
         body: body,
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json','X-CSRF-Token': csrf}
     }
     dispatch(requestStarted)
     fetch(url, options)
@@ -161,6 +164,7 @@ export async function updateUser(dispatch){
     const username = document.getElementById("userProfileUsernameField").value;
     const password = document.getElementById('userProfileUiPassword').value;
     const email = document.getElementById('userProfileUiNewEmail').value;
+    const csrf =  document.querySelector('meta[name="csrf-token"]').content
     const body = JSON.stringify({
         username: username,
         email: email,
@@ -174,7 +178,8 @@ export async function updateUser(dispatch){
         headers: {
             'Content-Type': 'application/json', 
             'Accept': 'application/json', 
-            'Authorization': bearer
+            'Authorization': bearer,
+            'X-CSRF-Token': csrf
         }
     }
     dispatch(requestStarted)
@@ -192,6 +197,7 @@ export default authSlice.reducer;
 export const current_user = state => state.auth.current_user;
 export const current_user_token = state => state.auth.current_user_token;
 export const current_user_id = state => state.auth.current_user_id;
+export const user_is_activated = state => state.auth.user_is_activated;
 export const requestResponse = state => state.auth.requestResponse;
 export const { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollapsed, loggedInUser, signedUpUser, updatedUser, requestStarted, signUpFailure, logInFailure, toggleUserProfileUiEditEmail, toggleUserProfileUiChangePassword } = authSlice.actions;
 export const authState = state => state.auth;

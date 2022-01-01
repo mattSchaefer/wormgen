@@ -25,6 +25,7 @@ export async function submitContact(dispatch){
     var message = document.getElementById('contactFormMessage').value
     var email = document.getElementById('contactFormEmail').value
     var subject = document.getElementById('contactFormSubject').value
+    const csrf =  document.querySelector('meta[name="csrf-token"]').content
     var body = JSON.stringify({
         message: message,
         email: email,
@@ -33,6 +34,7 @@ export async function submitContact(dispatch){
     var headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
     }
     const options = {
         method: 'POST',

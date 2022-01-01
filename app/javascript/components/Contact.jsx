@@ -3,6 +3,9 @@ import { TextField, Button } from '@material-ui/core'
 import { submitContact } from '../features/contact/contactSlice'
 import { contactState } from '../features/contact/contactSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import ReCaptchaV2 from 'react-google-recaptcha';
+import { verifyContactSubmitRecaptcha } from '../features/reCaptcha/reCaptchaSlice';
+import {reCaptchaState} from '../features/reCaptcha/reCaptchaSlice';
 const contactContainer = {
     width: '24rem',
 }
@@ -13,12 +16,25 @@ const contactForm = {
     height: '13rem',
     width: '23rem',
 }
+const contactSubmit = {
+    width: '50%',
+}
 export default function Contact(props){
     const dispatch = useDispatch()
     const conState = useSelector(contactState)
-
+    const re_captcha_state = useSelector(reCaptchaState)
     function formSubmit(){
-        dispatch(submitContact)
+        if(re_captcha_state.misc.contactSubmitRecaptchaVerified == 'yes')
+            dispatch(submitContact)
+        else
+            alert('please verify the captcha')
+    }
+    function handleContactSubmitCaptchaChange(token){
+        document.getElementById('uniqueRecaptchaSubmitContactToken').value = token
+        console.log(token)
+        setTimeout(function(){
+            dispatch(verifyContactSubmitRecaptcha)
+        },1000)
     }
     return(
         <div style={contactContainer}>
@@ -31,7 +47,9 @@ export default function Contact(props){
                         <TextField label="email" id="contactFormEmail" />
                         <TextField label="subject" id="contactFormSubject" />
                         <TextField variabt="filled" multiline label="message" id="contactFormMessage" />
-                        <Button variant="contained" color="primary" onClick={()=>formSubmit()}>Submit </Button>
+                        <ReCaptchaV2 theme="dark" id="forgotPasswordCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleContactSubmitCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />          
+                        <Button className="btn-grad" variant="contained" color="primary" onClick={()=>formSubmit()} style={contactSubmit}>Submit </Button>
+                        <input type="hidden" id="uniqueRecaptchaSubmitContactToken" />
                     </div>
                 </div>
             }

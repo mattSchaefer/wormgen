@@ -137,7 +137,8 @@ export async function fetchWorms(dispatch){
     const getWormsURL = '/api/v1/worms'
     const token = document.getElementById('token').value
     const bearer = "Bearer " + token
-    const options = {headers: {'Authorization': bearer} }
+    const csrf = document.querySelector('meta[name="csrf-token"]').content
+    const options = {headers: {'Authorization': bearer,'X-CSRF-Token': csrf} }
     console.log("fetchworm options ")
     console.log(options)
     await fetch(getWormsURL, options)
@@ -159,6 +160,7 @@ export async function favoriteWorm(){
     const bearer = "Bearer " + token
     const user_id = document.getElementById('userID').value
     const worm_id = document.getElementById('favWormToggleID').value
+    const csrf = document.querySelector('meta[name="csrf-token"]').content
     const body = JSON.stringify({
         id: worm_id,
         favorited_by: user_id
@@ -169,7 +171,8 @@ export async function favoriteWorm(){
         headers: {
             'Authorization': bearer,
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrf
         }
     }
     fetch(favWormURL, options)
@@ -186,6 +189,7 @@ export async function unfavoriteWorm(){
     const token = document.getElementById('token').value
     const user_id = document.getElementById('userID').value
     const worm_id = document.getElementById('favWormToggleID').value
+    const csrf = document.querySelector('meta[name="csrf-token"]').content
     const bearer = "Bearer " + token
     const body = JSON.stringify({
         id: worm_id,
@@ -197,7 +201,8 @@ export async function unfavoriteWorm(){
         headers: {
             'Authorization': bearer,
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrf
         }
     }
     fetch(favWormURL, options)

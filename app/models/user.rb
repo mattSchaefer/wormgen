@@ -3,8 +3,8 @@ class User < ApplicationRecord
     validates :username, presence: true, uniqueness: true
     validates :email, presence: true, uniqueness: true
     validates_format_of :email, with: /@/
-    validates :password, presence: true, length: {minimum: 8}
     has_many :worms, :dependent => :destroy
+    #add back password validation but only on create.... validates :password, presence: true, length: {is: 8}, on: :create
     attr_reader :worms
     include Token
 

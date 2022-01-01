@@ -13,7 +13,7 @@ import store from '../store/store';
 import { createStore } from 'redux';
 import WormCreator from './WormCreator';
 import { fetchWorms } from '../features/wormList/wormListSlice';
-import { current_user, current_user_token, current_user_id } from '../features/auth/authSlice';
+import { current_user, current_user_token, current_user_id, user_is_activated } from '../features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewCarouselIcon from '@material-ui/icons/ViewCarousel';
 import Favorite from '@material-ui/icons/Favorite';
@@ -27,6 +27,9 @@ import { animateScroll as scroll, scrollSpy, scroller, Events, Element, Link } f
 import { LaptopWindowsTwoTone } from '@material-ui/icons';
 import PersonOutlineSharpIcon from '@material-ui/icons/PersonOutlineSharp';
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import { profile_user_is_activated } from '../features/userProfile/userProfileSlice';
+import {verifyCreateWormRecaptcha} from '../features/reCaptcha/reCaptchaSlice';
+import {reCaptchaState} from '../features/reCaptcha/reCaptchaSlice';
 
 require('isomorphic-fetch');
 const mainImgBG = {
@@ -40,19 +43,17 @@ const backgroundGrey = {
     alignItems: 'center'
 }
 const popCard = { 
-    margin: "-60px 30px 0px",
     boxShadow: "1px -3px 47px 0px rgba(233,218,218,0.75)",
     WebkitBoxShadow:"1px -3px 47px 0px rgba(233,218,218,0.75)",
     MozBoxShadow: "1px -3px 47px 0px rgba(233,218,218,0.75)",
     position: 'relative',
     top: "-20px",
-    width: 'fit-content',
+    width: '100vw',
     padding: "15px",
     zIndex: '6',
     //background: "linear-gradient(to right, #de1245 0%, #ffbc15 100%)",
     color: "#eee",
     borderRadius: '7px',
-    width: '66%',
     fontWeight: '600',
 }
 const note = {
@@ -135,6 +136,10 @@ export default function Home(props){
     const active_slide = useSelector(activeSlide)
     const active_verbiage = useSelector(verbiage)
     const list_fil = useSelector(currentWormListFilter)
+    const usr_active = useSelector(user_is_activated)
+    const usr_prof_active = useSelector(profile_user_is_activated)
+    const user_active = usr_active == 'yes' || usr_prof_active == 'yes' ? 'yes' : 'no'
+    const rcaptcha_state = useSelector(reCaptchaState)
     var view1 = useSelector(view)
     var last_scroll_top = 0
     var last_scroll_bottom = 2000
@@ -330,9 +335,9 @@ export default function Home(props){
                                 <span style={generateWormsPContainer}>
                                     <p style={textCenter}>Just click or tap on the screen to start spawning a worm.  Hold down and drag.  Release to complete the worm.</p>
                                 </span>
-                                <WormCreator dispatch={dispatch} currentUser={user} currentUserToken={token} currentUserId={userID} />
+                                <WormCreator dispatch={dispatch} currentUser={user} currentUserToken={token} currentUserId={userID} currentUserActivated={user_active} wormCreateCaptchaVerified={rcaptcha_state.createWorm.createWormRecaptchaVerified} />
                                 <div id="newWormContainer"></div>
-                                <Link spy={true} smooth={true} duration={500} to="topOfPage" onSetActive={console.log('wormCreatorlink active...')} activeClass="active"></Link>
+                                <Link spy={true} smooth={true} duration={500} to="topOfPage" activeClass="active"></Link>
                             </div>
                         </section>
                         <hr />

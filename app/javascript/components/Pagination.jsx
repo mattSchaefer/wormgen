@@ -4,7 +4,7 @@ import { useDispatch, useEffect, useSelector } from 'react-redux';
 import { changePage } from '../features/wormList/wormListSlice';
 import { animateScroll as scroll, scrollSpy, scroller, Events, Element, Link } from 'react-scroll';
 import { view, current_page } from '../features/wormList/wormListSlice';
-const paginationButton = {background: "#eee", border: '2px solid #eee',}
+const paginationButton = { }
 const currentPageSpan = {color: '#eee',}
 const carouselPaginateSpan = {
     width: '100%',
@@ -27,12 +27,12 @@ export default function(props){
     }
     if(pagination_button_indexes.length > 0 && wormListView == 'list'){
         pagination_buttons = pagination_button_indexes.map((index)=>
-            <Button key={index} onClick={() => changeThePageAndScroll(index)} style={paginationButton}>{index}</Button>
+            <Button className="btn-grad" key={index} onClick={() => changeThePageAndScroll(index)} style={paginationButton}>{index}</Button>
         )
     }else{
         pagination_buttons = [
-            <Button onClick={() => changeThePageAndScroll(curr_worm_min_1)} style={paginationButton}>{'<<<'}</Button>,
-            <Button onClick={() => changeThePageAndScroll(curr_worm_plus_1)} style={paginationButton}>{'>>>'}</Button>
+            <Button className="btn-grad" onClick={() => changeThePageAndScroll(curr_worm_min_1)} style={paginationButton}>{'<<<'}</Button>,
+            <Button className="btn-grad" onClick={() => changeThePageAndScroll(curr_worm_plus_1)} style={paginationButton}>{'>>>'}</Button>
         ]
     }
     function changeThePageAndScroll(index){

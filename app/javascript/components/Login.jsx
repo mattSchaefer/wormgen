@@ -10,7 +10,12 @@ import { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollap
 import { login, signup, authState } from '../features/auth/authSlice';
 import { animateScroll as scroll, scrollSpy, scroller, Events, Element, Link } from 'react-scroll';
 import { fetchWorms } from '../features/wormList/wormListSlice';
+import { toggleForgotPasswordView, toggleResetPasswordView, activateAccount, accountActivationResponse } from '../features/userProfile/userProfileSlice';
 import UserProfile from './UserProfile';
+import ReCaptchaV2 from 'react-google-recaptcha';
+import {verifySignupRecaptcha, verifyLoginRecaptcha, verifyActivateAccountRecaptcha} from '../features/reCaptcha/reCaptchaSlice';
+import {reCaptchaState} from '../features/reCaptcha/reCaptchaSlice';
+
 
 require('isomorphic-fetch');
 const hunnitHeight = {
@@ -24,9 +29,10 @@ const welcomeBackHeader = {
 const justFlex = {display: "flex", minHeight: '18rem',}
 const flexBet = {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '18vh',
+    flexDirection: 'column-reverse',
+    minHeight: '50vh',
 }
 const flexColumn = {
     display: "flex",
@@ -62,6 +68,15 @@ const strongStyle={
     textDecoration: 'underline',
     textDecorationThickness: 'bold',
     fontWeight: 'bold',
+    backgroundImage: 'linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)',
+    padding: '5px',
+    textAlign: 'center',
+    transition: '0.5s',
+    backgroundSize: '200% auto',
+    color: 'white',
+    borderRadius: '10px',
+    backgroundPosition: 'right center',
+    textDecoration: 'none',
     
 }
 const hoverButtonStyle = {
@@ -93,8 +108,13 @@ const formContainer = {
     padding: '1rem',
 }
 const centerPg = {
-    textAlign: 'center',
+    textAlign: 'start',
     width: '66%',
+    alignSelf: 'start',
+    display: 'none',
+}
+const alignStart = {
+    alignSelf: 'start',
 }
 const leftMargin={
     marginLeft: '2rem',
@@ -118,7 +138,8 @@ const dontDisplay = {
 const loggedInHeaderContainer = {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
 }
 const eeeColor = {
@@ -136,9 +157,17 @@ const flex = {
 const errorMessage = {
     color: 'red',
 }
+const flexSpaceAround = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+}
 export default function Login(props){
     const dispatch = useDispatch();
     const state = useSelector(authState);
+    const account_activate_response = useSelector(accountActivationResponse)
+    var captcha_state = useSelector(reCaptchaState)
     function tryAgain1(){
         alert("try gain");
         dispatch(tryAgain)
@@ -190,10 +219,18 @@ export default function Login(props){
         }
     }
     function formSubmit(){
-        if(state.displayedSection == 'signup')
-            signUp()
-        else if(state.displayedSection == 'login')
-            logIn()
+        if(state.displayedSection == 'signup'){
+            if(captcha_state.signup.signUpRecaptchaVerified == 'yes')
+                signUp()
+            else
+                alert('please verify the captcha')
+        }
+        else if(state.displayedSection == 'login'){
+            if(captcha_state.login.logInRecaptchaVerified == 'yes')
+                logIn()
+            else
+                alert('please verify the captcha')
+        }
     }
     function headLinkClick(link){
         var options = {
@@ -224,6 +261,64 @@ export default function Login(props){
                 break;
         }
     }
+    function toggleForgotPass(){
+        var options = {
+            smooth: 'easeInOutQuint',
+            duration: 336,
+            delay: 75,
+            offset: -72,
+            isDynamic: true
+        }
+        dispatch(toggleForgotPasswordView())
+        scroller.scrollTo("footer", options)
+    }
+    function toggleResetPass(){
+        var options = {
+            smooth: 'easeInOutQuint',
+            duration: 336,
+            delay: 75,
+            offset: -72,
+            isDynamic: true
+        }
+        dispatch(toggleResetPasswordView())
+        scroller.scrollTo("footer", options)
+    }
+    function activateAccountSubmit(){
+        if(captcha_state.misc.activateAccountRecaptchaVerified == 'yes'){
+            dispatch(activateAccount)
+            setTimeout(function(){
+                dispatch(fetchWorms)
+            },3000)
+        }else{
+            alert('please verify the captcha')
+        }
+        
+    }
+    function handleLoginSignupCaptchaChange(token, which){
+        if(which == 'signup'){
+            document.getElementById('uniqueRecaptchaSignupToken').value = token
+            console.log(token)
+            setTimeout(function(){
+                dispatch(verifySignupRecaptcha)
+            },1000)
+        }else{
+            document.getElementById('uniqueRecaptchaLoginToken').value = token
+            console.log(token)
+            setTimeout(function(){
+                dispatch(verifyLoginRecaptcha)
+            },1000)
+        }
+    }
+    function handleActivateAccountCaptchaChange(token){
+        document.getElementById('uniqueRecaptchaActivateAccountToken').value = token
+        console.log(token)
+        setTimeout(function(){
+            dispatch(verifyActivateAccountRecaptcha)
+        },1000)
+    }
+    function handleCaptchaExpre(){
+
+    }
     return(
         <div style={hunnitHeight}>
             {state.sectionCollapsed}
@@ -231,13 +326,13 @@ export default function Login(props){
                 {
                     (!state.requestFinished || state.requestResponse.status !== 200) &&
                     <div style={logInSignUp}>
-                        <div onClick={(e) => logInSignUpClick1(e, 'login')} onMouseEnter={(e) => logInSignUpHover(e, 'login')} onMouseLeave={(e) => noMoreHover()}>
+                        <div className="btn-grad2" onClick={(e) => logInSignUpClick1(e, 'login')} onMouseEnter={(e) => logInSignUpHover(e, 'login')} onMouseLeave={(e) => noMoreHover()}>
                             <span style={state.displayedSection == 'login' ? strongStyle : state.activeHover == 'login' ? hoverButtonStyle : {}} onClick={(e) => logInSignUpClick1(e, 'login')}> 
                                 Log On
                             </span>
                         </div>
                         <span>/</span>
-                        <div onClick={(e) => logInSignUpClick1(e, 'signup')} onMouseEnter={(e) => logInSignUpHover(e, 'signup')} onMouseLeave={(e) => noMoreHover()}>
+                        <div className="btn-grad2" onClick={(e) => logInSignUpClick1(e, 'signup')} onMouseEnter={(e) => logInSignUpHover(e, 'signup')} onMouseLeave={(e) => noMoreHover()}>
                             <span style={state.displayedSection == 'signup' ? strongStyle : {}} >
                                 Sign Up
                             </span>
@@ -247,31 +342,32 @@ export default function Login(props){
                 {
                     state.current_user == 'anon' &&
                     <div>
-                        wormcreate.com
+                        
                     </div>    
                 }
                 {
                     state.requestFinished && state.requestResponse.status == 200  &&
                     <span style={loggedInHeaderContainer}>
-                        <div className="scrollToTopHeaderDiv" onClick={() => scroll.scrollToTop()}>
-                            <ArrowUpward />
-                        </div>
-                        <div className="account-info-link" onClick={() => headLinkClick("footer")}>
+                        
+                        <div className="account-info-link btn-grad2" onClick={() => headLinkClick("footer")}>
                             <PersonOutlineSharpIcon />
                             {state.requestResponse.user.username}
                             <TextField id="token" disabled value={state.current_user_token} onChange={() => dispatch(fetchWorms)} style={dontDisplay} />
                             <TextField id="userID" disabled value={state.current_user_id} style={dontDisplay} />
                         </div>
                         <div style={flex} >
-                            <Link style={headLink} onClick={() => headLinkClick('generate_worms')} >Generate Worms</Link>
-                            <Link style={headLink} onClick={() => headLinkClick('favorite_worms')}>Worm Gallary</Link>
-                            <Link style={headLink} onClick={() => headLinkClick('why_were_here')}>Our Mission</Link>
-                            <Link style={headLink} onClick={() => headLinkClick('note')}>A Note</Link>
+                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('generate_worms')} >Generate Worms</Link>
+                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('favorite_worms')}>Worm Gallary</Link>
+                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('why_were_here')}>Our Mission</Link>
+                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('note')}>A Note</Link>
                         </div>
                     </span>
                 }
                 <div>
-                    <Button onClick={(e) => toggleCollapsed1(e)}>
+                    <div className="scrollToTopHeaderDiv btn-grad2" onClick={() => scroll.scrollToTop()}>
+                            <ArrowUpward />
+                    </div>
+                    {/* <Button onClick={(e) => toggleCollapsed1(e)}>
                         {
                             !state.sectionCollapsed && 
                             <MenuSharpIcon style={eeeColor} />
@@ -280,7 +376,8 @@ export default function Login(props){
                             state.sectionCollapsed &&
                             <CloseSharpIcon style={eeeColor}  />
                         }
-                    </Button>
+                    </Button> */}
+
                 </div>
             </div>
             {
@@ -306,11 +403,14 @@ export default function Login(props){
                                         state.displayedSection == 'signup' &&
                                         <TextField id="password-confirm" label="Password Confirmation" type="password" error={state.signupError == 'yes'} style={fillContainer} />
                                     }
-                                    <Button id="form-submit" variant="contained" color="primary" style={submitButton} onClick={()=>formSubmit()}>Submit</Button>
+                                    <ReCaptchaV2 theme="dark" id="loginSignupCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleLoginSignupCaptchaChange(token, state.displayedSection)}} onExpire={(e) => {handleCaptchaExpire()}} />
+                                    <input type="hidden" id="uniqueRecaptchaSignupToken" />
+                                    <input type="hidden" id="uniqueRecaptchaLoginToken" />
+                                    <Button className="btn-grad" id="form-submit" variant="contained" color="primary" className="btn-grad" style={submitButton} onClick={(e)=>formSubmit()}>Submit</Button>
                                     { (!state.requestFinished || state.requestResponse.status !== 200) && 
-                                        <span>
-                                            <span class="actually-link">forgot password</span>
-                                            <span class="actually-link">reset password</span>
+                                        <span style={flexSpaceAround}>
+                                            <span class="actually-link btn-grad2" onClick={(e) => toggleForgotPass()}>forgot password</span>
+                                            <span class="actually-link btn-grad2" onClick={(e)=> toggleResetPass()}>reset password</span>
                                         </span>
                                     }
                                 </span>
@@ -324,14 +424,14 @@ export default function Login(props){
                             {
                                 ( state.displayedSection == 'signup' && (!state.requestFinished || state.requestResponse.status !== 200)) && 
                                 <div style={flexColCenter}>
-                                    <h3>Sign Up</h3>
+                                    <h3 style={alignStart}>Sign Up</h3>
                                     <p style={centerPg}>Create and publish worms on our platform.  Comment on worms.  Submit your worm to be a featured worm on our platform and on social media!</p>
                                 </div>
                             }
                             {
                                 (  state.displayedSection == 'login' && (!state.requestFinished || state.requestResponse.status !== 200)) && 
                                 <div style={flexColCenter}>
-                                <h3>Log On</h3>
+                                <h3 style={alignStart}>Log On</h3>
                                     <p style={centerPg}>Log on with us and get to the good stuff.  Thanks for coming back.</p>
                                 </div>
                             }
@@ -342,19 +442,48 @@ export default function Login(props){
                             <div>loading animation..</div>
                         }
                         {
-                            state.requestFinished && state.requestResponse.status == 200 && state.displayedSection == 'signup' &&
+                            state.requestFinished && state.requestResponse.status == 200 && state.displayedSection == 'signup' && account_activate_response.status !== 200 &&
                             <div>
                                 <h2 style={welcomeBackHeader}>Thanks for signing up, {state.requestResponse.user.username}.</h2>
+                                <p>One last thing...</p>
+                                <p>We need you to activate your account before you can create worms.  To do this, please check your email, enter the code below, and click 'activate' to activate your account</p>
+                                <TextField id="activationCode" label="Activation Code (no spaces):" error={account_activate_response.status == 401 || account_activate_response.status == 500} />
+                                <ReCaptchaV2 theme="dark" id="loginSignupCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleActivateAccountCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />
+                                <Button className="btn-grad" variant="contained" color="primary" style={submitButton} onClick={(e) => activateAccountSubmit()} >Activate</Button>
+                                <input type="hidden" id="uniqueRecaptchaActivateAccountToken" />
+                                
+                            </div>
+                        }
+                        {
+                            state.requestFinished && state.requestResponse.status == 200 && state.displayedSection == 'signup' && account_activate_response.status == 200 &&
+                            <div>
+                                <h2>Boom!</h2>
+                                <p>You're all set.  Scroll down to generate some worms and view the Worm Gallary.</p>
                             </div>
                         }
                         {
                             state.requestFinished && state.requestResponse.status == 200 &&
                             <div>
-                                {state.displayedSection == 'login' &&
+                                {state.displayedSection == 'login' && state.requestResponse.user.activated &&
                                     <span> 
                                         <h2 style={welcomeBackHeader}>Welcome back, <span style={underline}>{state.requestResponse.user.username}</span>.</h2>
-                                        <h3 style={welcomeBackHeader}>  Remember?... The early bird gets the worm...</h3>
+                                        <h3 style={welcomeBackHeader}>  Never forget that the early bird gets the worm...</h3>
                                     </span>
+                                }
+                                {state.displayedSection == 'login' && !state.requestResponse.user.activated && account_activate_response.status !== 200 &&
+                                    <div>
+                                        <p>One last thing...</p>
+                                        <p>We need you to activate your account before you can create worms.  To do this, please check your email, enter the code below, and click 'activate' to activate your account</p>
+                                        <TextField id="activationCode" label="Activation Code (no spaces):" error={account_activate_response.status == 401 || account_activate_response.status == 500} />
+                                        <Button className="btn-grad" variant="contained" color="primary" style={submitButton} onClick={(e) => activateAccountSubmit()} >Activate</Button>
+                                    </div>
+                                }
+                                {
+                                    state.requestFinished && state.requestResponse.status == 200 && state.displayedSection == 'login' && account_activate_response.status == 200 &&
+                                    <div>
+                                        <h2>Boom!</h2>
+                                        <p>You're all set.  Scroll down to generate some worms and view the Worm Gallary.</p>
+                                    </div>
                                 }
                                
                             </div>

@@ -34,6 +34,9 @@ const rowFlexCenter = {
 const white = {
     color: '#eee',
     fontSize: '7rem !important',
+    marginTop: '48vh',
+    maxWidth: '100%',
+    fontSize: '3rem !important',
 }
 const borderWhite = {
     border: '2px solid #eee'

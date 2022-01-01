@@ -174,7 +174,7 @@ export default function Worm(props){
        
             { props.src && 
             <span style={view1 == 'list' ? wormContainer : wormContainerCarousel }>
-                <img src={props.src} style={view1 == 'list' ? wormStyle : wormStyleCarousel} download></img>
+                <img className="worm-image" src={props.src} style={view1 == 'list' ? wormStyle : wormStyleCarousel} download></img>
                 <div style={wormInfoContainer}>
                     <p style={Object.assign({},wormTitle, wormAttr)}>{props.name}</p>
                     <span style={nonTitleWormAttrs}>

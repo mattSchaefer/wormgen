@@ -7,6 +7,9 @@ import { fetchWorms } from '../features/wormList/wormListSlice';
 import { useSelector } from 'react-redux';
 import { current_user, current_user_token, current_user_id } from '../features/auth/authSlice';
 import NewWormAttrs from './NewWormAttrs';
+import ReCaptchaV2 from 'react-google-recaptcha';
+import {verifyCreateWormRecaptcha} from '../features/reCaptcha/reCaptchaSlice';
+import {reCaptchaState} from '../features/reCaptcha/reCaptchaSlice';
 const homePageCanvas = {
     display: 'flex',
     flexDirection: 'row',
@@ -125,13 +128,17 @@ export default class WormCreator extends React.Component{
                 }        
         };
         sketch.saveWorm = (e) => {
-            const img = canvas.get();
-            img.save(sketch.frameCount, '.png');
-            console.log("saved image from sketch 2");
-            console.log(img);
-            var img2_url = img.canvas.toDataURL();
-            this.pushWormToDB(img2_url);
-            return img;
+            if(this.props.wormCreateCaptchaVerified == 'yes'){
+                const img = canvas.get();
+                img.save(sketch.frameCount, '.png');
+                console.log("saved image from sketch 2");
+                console.log(img);
+                var img2_url = img.canvas.toDataURL();
+                this.pushWormToDB(img2_url);
+                return img;
+            }else{
+                alert("please verify the captcha")
+            }
         };
         sketch.exportWorm = (e) => {
             sketch.saveCanvas();
@@ -161,17 +168,32 @@ export default class WormCreator extends React.Component{
     componentDidMount() {
       this.myP5 = new P5(this.Sketch, this.myRef.current)
     }
+    
     render() {
+        function handleCreateWormCaptchaChange(token, dispatch){
+            document.getElementById('uniqueRecaptchaSaveWormToken').value = token
+            console.log(token)
+            setTimeout(function(){
+                dispatch(verifyCreateWormRecaptcha)
+            },1000)
+        }
         return(
             <span>
                 <div ref={this.myRef} style={homePageCanvas}></div>
                 <div>
                     <NewWormAttrs user={this.props.currentUser} />
+                    <ReCaptchaV2 theme="dark" id="createWormCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleCreateWormCaptchaChange(token, this.props.dispatch)}} onExpire={(e) => {handleCaptchaExpire()}} />
                     <span style={buttonContainer}>
-                        <Button variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton">save worm</Button>
-                        <Button variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.exportWorm(e)} id="exportWormButton">export worm</Button>
+                        {
+                            this.props.currentUserActivated == 'yes' &&
+                            <span style={buttonContainer}>
+                                <Button className="btn-grad" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton">save worm</Button>
+                                <Button className="btn-grad" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.exportWorm(e)} id="exportWormButton">export worm</Button>
+                            </span>
+                        }
                     </span>
                 </div>
+                <input type="hidden" id="uniqueRecaptchaSaveWormToken" />
             </span>
         );
     }

@@ -9,7 +9,7 @@ class Api::V1::AuthController < ApplicationController
            
             token = build_token(user.id)
             
-            render json: {message: 'SUCCESS', user: user, token: token, status: 200}
+            render json: {message: 'SUCCESS', user: user, token: token, status: 200, activated: user.activated.to_s}
         else
             render json: {message: "there was an issue logging in. please try again", status: 500}
         end

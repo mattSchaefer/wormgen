@@ -1,17 +1,18 @@
 class PasswordsController < ApplicationController
-    skip_before_action :verify_authenticity_token, :only => [:forgot, :reset_via_old_password]
+    #skip_before_action :verify_authenticity_token, :only => [ :reset_via_old_password]
+    skip_before_action :require_token, :only => [ :forgot, :reset_via_token]
     protect_from_forgery with: :null_session
     def forgot
         if pword_params[:email].blank?
             return render json: {error: 'Email not present'}
         end
         user = User.find_by(email: pword_params[:email].downcase)
-        if user.present?
-            user.reset_password_token = SecureRandom.hex(10)
+        if user
+            user.reset_password_token = SecureRandom.hex(10).strip
             user.reset_password_sent_at = Time.now.utc
             if user.save!
                 @reset_token = user.reset_password_token
-                UserMailer.with(forgot_token: @reset_token, email: pword_params[:email]).forgot_password_email.deliver_later
+                UserMailer.with(forgot_token: @reset_token, email: pword_params[:email]).forgot_password_email.deliver_now
                 render json: {status: 'ok'}, status: :ok
             end
         else
@@ -20,13 +21,16 @@ class PasswordsController < ApplicationController
     end
     def reset_via_token
         token = pword_params[:token].to_s
-        if pword_params[:email].blank?
+        if pword_params[:token].blank?
             return render json: {error: 'token not present'}
         end
         user = User.find_by(reset_password_token: token)
-        if user.present? && user.password_token_valid?
-            if user.reset_password!(pword_params[:new_password])
-                render json: {status: 'ok'}, status: :ok
+        valid = ((user.reset_password_sent_at + 4.hours) > Time.now.utc)
+        if user.present? && valid
+            user.reset_password_token = nil
+            user.password = pword_params[:new_password]
+            if user.save!
+                render json: {status: 'ok', message: 'password successfully reset'}, status: :ok
             else
                 render json: {error: 'error'}
             end

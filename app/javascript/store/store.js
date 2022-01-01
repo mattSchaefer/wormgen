@@ -4,6 +4,7 @@ import authReducer from '../features/auth/authSlice';
 import aboutReducer from '../features/about/aboutUsSlice';
 import contactReducer from '../features/contact/contactSlice';
 import userProfileReducer from '../features/userProfile/userProfileSlice';
+import reCaptchaReducer  from '../features/reCaptcha/reCaptchaSlice';
 import thunkMiddleware from 'redux-thunk';
 import { applyMiddleware } from 'redux';
 import { composedWithDevTools } from 'redux-devtools-extension';
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
         about: aboutReducer,
         contact: contactReducer,
         userProfile: userProfileReducer,
+        reCaptcha: reCaptchaReducer
     });
 export default configureStore({
     reducer: rootReducer,

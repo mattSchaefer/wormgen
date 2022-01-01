@@ -1,5 +1,5 @@
 class Api::V1::WormsController < ApplicationController
-    skip_before_action :require_token, :verify_authenticity_token, :only => [:create, :add_to_user]
+    skip_before_action :require_token, :only => [:create, :add_to_user]# :verify_authenticity_token,
     protect_from_forgery with: :null_session
     def index
         @worms = Worm.order(created_at: :asc)
@@ -43,7 +43,7 @@ class Api::V1::WormsController < ApplicationController
     end
     def favorite_for_user
         @worm = Worm.find_by_id(worm_params[:id])
-        if(@worm.favorited_by_user(worm_params[:favorited_by], worm_params[:id]))
+        if(User.find(worm_params[:favorited_by]).activated && @worm.favorited_by_user(worm_params[:favorited_by], worm_params[:id]))
             worm2 = Worm.find_by_id(worm_params[:id])
             render json: {
                 worm: worm2,
