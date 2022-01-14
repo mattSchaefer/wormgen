@@ -1,5 +1,5 @@
 class Api::V1::ContactsController < ApplicationController
-    skip_before_action :require_token, :only => [:index, :create, :new]
+    skip_before_action :require_token, :only => [:create]
     protect_from_forgery with: :null_session
     def new
         @contact = Contact.new(contact_params)

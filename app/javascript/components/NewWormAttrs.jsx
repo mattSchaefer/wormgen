@@ -12,9 +12,9 @@ const alignSelfCenter = {
 export default function NewWormAttrs(props){
     return(
         <form style={flexCol}>
-            <TextField id="new-worm-name" label="worm name" placeholder="untitled" style={alignSelfCenter} />
-            <span>Worm Creator: {props.user}</span>
-            <span>Created around: {new Date(Date.now()).toLocaleDateString()}</span>
+            <TextField id="new-worm-name"  className="revealable" label="worm name" placeholder="untitled" style={alignSelfCenter} />
+            <span className="revealable" >Worm Creator: {props.user}</span>
+            <span className="revealable" >Created around: {new Date(Date.now()).toLocaleDateString()}</span>
         </form>
     )
 }

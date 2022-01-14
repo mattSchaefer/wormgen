@@ -25,7 +25,7 @@ module Token
         decoded = decode_token(token)
         expired = DateTime.now.to_i > decoded[0]['exp']
         return_data = {expired: expired, decoded: decoded}
-        if decoded == user_id && User.find(user_id).activated && User.find(user_id).activated == true
+        if decoded[0]['data'].to_s == user_id.to_s && User.find(user_id).activated && User.find(user_id).activated == true && expired === false
             return_data = {message: 'authorized', status: 200}
         else
             return_data = {message: 'not authorized', status: 500}

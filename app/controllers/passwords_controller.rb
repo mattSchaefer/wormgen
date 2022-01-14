@@ -40,10 +40,15 @@ class PasswordsController < ApplicationController
         respond_to :html, :json, :xml
         if pword_params[:email]
             user = User.find_by(email: pword_params[:email])
-            if user.authenticate(pword_params[:old_password])
+            user_id = user.id
+            header = request.headers['Authorization'] || ''
+            token = header.split(' ').last
+            authorized_token = authorize_token(token, user_id.to_s)
+            new_token = build_token(user_id)
+            if user.authenticate(pword_params[:old_password]) && authorized_token[:message] == 'authorized'
                 user.password = pword_params[:new_password]
                 user.save!
-                render json: {message: 'good', status: 200}
+                render json: {message: 'good', status: 200, new_token: new_token}
             else
                 render json: {message: 'bad', status: 500}
             end

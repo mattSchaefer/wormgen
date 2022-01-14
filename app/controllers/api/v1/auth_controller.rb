@@ -18,7 +18,6 @@ class Api::V1::AuthController < ApplicationController
     end
     def log_out
         respond_to :html, :json, :xml
-        user = ''
         render json: {
             message: "user is logged out",
             status: 200

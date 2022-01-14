@@ -15,7 +15,9 @@ export const authSlice = createSlice({
         activeHover: "",
         signupError: 'no',
         loginError: 'no',
-        user_is_activated: 'no'
+        user_is_activated: 'no',
+        logoutResponse: {},
+        loggedOutQuestion: 'no'
         
     },
     reducers: {
@@ -106,6 +108,22 @@ export const authSlice = createSlice({
         },
         toggleUserProfileUiChangePassword: (state, action) => {
             state.userProfileUiChangePasswordExpanded == 'no' ? state.userProfileUiChangePasswordExpanded = 'yes' : state.userProfileUiChangePasswordExpanded = 'no';
+        },
+        loggedOut: (state, action) => {
+            state.logoutResponse = action.payload
+            state.loggedOutQuestion = 'yes'
+            state.current_user = 'anon'
+            state.current_user_token = ''
+            state.current_user_id = 0
+            state.requestPending = false
+            state.displayedSection = 'login'
+            state.requestPending = false
+            state.requestFinished = false
+            state.requestResponse = {hold: 'hold', status: 0}
+            state.requestStarted = false
+        },
+        loggedOutFail: (state, action) => {
+            state.logoutResponse = action.payload
         }
     },
 })
@@ -154,10 +172,37 @@ export async function signup(dispatch){
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
+            document.getElementById('loginSignupLoader').style.visibility = 'hidden';
+
             dispatch(signedUpUser(json))
         }).catch((e)=>{
             dispatch(signUpFailure(e))
         })
+};
+export async function logout(dispatch){
+    // const url = "api/v1/users/" + document.getElementById('userID').value
+    // const csrf =  document.querySelector('meta[name="csrf-token"]').content
+    // const token = document.getElementById('token').value
+    // const bearer = "Bearer " + token
+    // const options = {method: 'GET',
+    //     headers: {
+    //     'Content-Type': 'application/json', 
+    //     'Accept': 'application/json', 
+    //     'Authorization': bearer,
+    //     'X-CSRF-Token': csrf
+    //     }
+    // }
+    // fetch(url, options)
+    //     .then((response) => response.json())
+    //     .then((json)=> {
+    //         console.log(json)
+            const json = {message: 'user logged out lol', status: 200}
+            dispatch(loggedOut(json))
+        // }).catch((e)=>{
+        //     console.log(e)
+        //     dispatch(loggedOutFail(e))
+        // })
+
 };
 export async function updateUser(dispatch){
     const url = "api/v1/users/" + document.getElementById('userID').value
@@ -199,5 +244,5 @@ export const current_user_token = state => state.auth.current_user_token;
 export const current_user_id = state => state.auth.current_user_id;
 export const user_is_activated = state => state.auth.user_is_activated;
 export const requestResponse = state => state.auth.requestResponse;
-export const { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollapsed, loggedInUser, signedUpUser, updatedUser, requestStarted, signUpFailure, logInFailure, toggleUserProfileUiEditEmail, toggleUserProfileUiChangePassword } = authSlice.actions;
+export const { tryAgain, loginSignUpClick, loginSignUpHover, noMoreHover, toggleCollapsed, loggedInUser, signedUpUser, updatedUser, requestStarted, signUpFailure, logInFailure, toggleUserProfileUiEditEmail, toggleUserProfileUiChangePassword, loggedOut, loggedOutFail } = authSlice.actions;
 export const authState = state => state.auth;

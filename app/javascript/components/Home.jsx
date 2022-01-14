@@ -19,8 +19,8 @@ import ViewCarouselIcon from '@material-ui/icons/ViewCarousel';
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import ListIcon from '@material-ui/icons/List';
-import { view, pageStart, pageEnd, currentWormListFilter } from '../features/wormList/wormListSlice';
-import { changeView, filterByFavorite, filterByCurrentUser, resetFilter } from '../features/wormList/wormListSlice';
+import { view, pageStart, pageEnd, currentWormListFilter, saveWormRequestPending, saveWormRequestFinished  } from '../features/wormList/wormListSlice';
+import { changeView, filterByFavorite, filterByCurrentUser, resetFilter, setSaveWormRequestPending } from '../features/wormList/wormListSlice';
 import changeSlide  from '../features/about/aboutUsSlice';
 import { activeSlide, playPause, verbiage } from '../features/about/aboutUsSlice';
 import { animateScroll as scroll, scrollSpy, scroller, Events, Element, Link } from 'react-scroll';
@@ -118,6 +118,14 @@ const viewIconsContainer = {
 }
 const activeIcon = {
     borderBottom: '1px solid',
+    color: "white !important",
+    textDecoration: "none !important",
+    backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
+    padding: "5px",
+    textAlign: "center",
+    transition: "0.3s ease-in",
+    backgroundSize: "200% auto",
+    borderRadius: "20px",
 }
 const spanPad = {
     paddingLeft: '5px',
@@ -140,6 +148,8 @@ export default function Home(props){
     const usr_prof_active = useSelector(profile_user_is_activated)
     const user_active = usr_active == 'yes' || usr_prof_active == 'yes' ? 'yes' : 'no'
     const rcaptcha_state = useSelector(reCaptchaState)
+    const worm_currently_saving = useSelector(saveWormRequestPending)
+    const worm_finished_saving = useSelector(saveWormRequestFinished)
     var view1 = useSelector(view)
     var last_scroll_top = 0
     var last_scroll_bottom = 2000
@@ -156,52 +166,41 @@ export default function Home(props){
                 document.getElementById('header-bar').classList.add('stickToTop')
             }else if(scrollPos < 250 && document.getElementById('header-bar').classList.contains('stickToTop')){
                 document.getElementById('header-bar').classList.remove('stickToTop')
-            }
-            if ((document.body.getBoundingClientRect()).top > scrollPos){
-                // scroll_direction = 'up'
-                // var pos = Math.abs(scrollPos)
-                // if(pos > DEPTH && pos < DEPTH + BUFFER){
-                //     scroll.scrollTo(0)
-                // }else if(pos > DEPTH * 2 && pos < (DEPTH * 2) + BUFFER){
-                //     scroll.scrollTo(DEPTH + BUFFER)
-                // }
-                // else if(pos > DEPTH * 3 && pos < (DEPTH * 3) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 2) + BUFFER)
-                // }
-                // else if(pos > DEPTH * 4 && pos < (DEPTH * 4) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 3) + BUFFER)
-                // }
-                // else if(pos > DEPTH * 5 &&pos < (DEPTH * 5) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 4) + BUFFER)
-                // }
-                // else if(pos > DEPTH * 6 &&pos < (DEPTH * 6) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 5) + BUFFER)
-                // }
-                // else if(pos > DEPTH * 7 &&pos < (DEPTH * 7) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 6) + BUFFER)
-                // }
-            }
-            else{
-                //  scroll_direction = 'down'
-                // var pos = Math.abs(scrollPos)
-                // if(pos > DEPTH && pos < DEPTH + BUFFER){
-                //     scroll.scrollTo((DEPTH) + (BUFFER*2))
-                // }else if(pos > DEPTH * 2 && pos < (DEPTH * 2) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 2) + (BUFFER *2))
-                // }
-                // else if(pos > DEPTH * 2.8 && pos < (DEPTH * 2.8) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 3) + (BUFFER *2))
-                // }
-                // else if(pos > DEPTH * 4 && pos < (DEPTH * 4) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 5) - BUFFER)
-                // }
-                // else if(pos > DEPTH * 5 &&pos < (DEPTH * 5) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 6) - BUFFER)
-                // }
-                // else if(pos > DEPTH * 6 &&pos < (DEPTH * 6) + BUFFER){
-                //     scroll.scrollTo((DEPTH * 7) - BUFFER)
-                // }
+                var ratio = 250 / scrollPos;
+                var ratio_to_vh_limit_thirty_three = 33 / ratio
                 
+            }
+            document.getElementById('mainImgBG').style.marginRight = scrollPos.toString() + 'px'
+            // var sections = document.querySelectorAll('section')
+            // for(var i = 0; i < sections.length; i++){
+            //     var section_top = sections[i].getBoundingClientRect().top
+            //     var section_id = sections[i].getAttribute('id')
+            //     var scroll_show = 200
+            //     var windowHeight = window.innerHeight;
+            //     if(section_top < (windowHeight - scroll_show))
+            //         sections[i].classList.add('activate-section')
+            //     else
+            //         sections[i].classList.remove('activate-section')
+            //     console.log(section_id + ": " + section_top)
+            // } 
+            var revelables = document.querySelectorAll('.revealable')
+            for(var i = 0; i < revelables.length; i++){
+                var section_top = revelables[i].getBoundingClientRect().top
+                var scroll_show = 50
+                var windowHeight = window.innerHeight;
+                if(section_top < (windowHeight - scroll_show))
+                    revelables[i].classList.add('activate-revealable')
+                else
+                    revelables[i].classList.remove('activate-revealable')
+            } 
+            var a_note_section = document.getElementById('aNoteSection')
+            var a_note_top = a_note_section.getBoundingClientRect().top
+            var window_Height2 = window.innerHeight;
+            var scroll_show_2 = 400
+            if(a_note_top < (window_Height2 - scroll_show_2)){
+                a_note_section.classList.add('aNoteSectionRevealed')
+            }else{
+                a_note_section.classList.remove('aNoteSectionRevealed')
             }
             scrollPos = Math.abs((document.body.getBoundingClientRect()).top);
            
@@ -285,7 +284,7 @@ export default function Home(props){
         <div style={wormID == pageStart1 ? tiltWormStart : wormID == pageEnd1 ? tiltWormEnd : {}} id="topOfPage">
            
             <Element name="topOfPage" ></Element> 
-            <div className="mainImgBG flex-col">
+            <div id="mainImgBG" className="mainImgBG flex-col">
              <Header />
             </div>
             <div style={backgroundGrey}>
@@ -299,7 +298,7 @@ export default function Home(props){
                                 <UserProfile></UserProfile>
                             </section>
                         }
-                        <section>
+                        <section id="aboutUsSection" className="revealable">
                             <AboutUs slide={active_slide} verbiage={active_verbiage} />
                             <Link spy={true} smooth={true} to="wormGallHead" duration={500} activeClass="active"></Link>
                         </section>
@@ -307,35 +306,35 @@ export default function Home(props){
                         <Element name="aboutUs"></Element>
                        
                         <hr />
-                        <section>
+                        <section className="revealable" id="whyWereHereSection">
                             <div>
                                 <Element name="whyWereHere" id="whyWereHere"></Element>
-                                <h2 id="whyWereHere">Our Mission</h2>
-                                <p style={leftRem}>Here at wormcreate.com, we believe that the world needs more worms.  We aim to put the power in the hands of the people to make You an artist.  Our intent is to have as many as possible worms generated by you all, and for these worms to impose their presence across the metaverse.</p>
+                                <h2 id="whyWereHere" className="revealable" >What We Want</h2>
+                                <p style={leftRem} className="revealable" >Here at wormcreate.com, we believe that the world needs more worms.  We aim to put the power in the hands of the people to make You an artist.  Our intent is to have as many as possible worms generated by you all, and for these worms to impose their presence across the metaverse. We aim to change the world through user-participatory-pier-to-host pseudo-randomly-contingent generative art.</p>
                             </div>
                             
                         </section>
                         <hr />
-                        <section>
+                        <section id="aNoteSection">
                             <div>
                                
                                 <Element name="aNote" id="aNote"></Element>
-                                <h2 id="aNote">A Note from The Admin:</h2>
-                                <h4 style={Object.assign({}, leftRem)}>For the Case in which You were Wondering, I do Consider Myself the <span style={note}>Johannes Gütenberg of Generating Worms</span>, the <span style={note}>Steve Jobs of Generated Worm Farming</span></h4>
-                                <p style={Object.assign({}, leftTwoRem)}>The every-day average person deserves to harness the power of p5.js to generate aesthetically pleasing worms.  It is a simple fact.  That is why I followed like one or two p5.js guides and then created a variation of a simple program that is found in many 'how to p5' blog posts and put it on a Ruby on Rails application with a React/Redux frot-end that uses Material-UI.</p>
-                                <p style={Object.assign({}, leftTwoRem)}>Do with this what you will, but remember: with great power comes great responsibility. </p>
+                                <h2 id="aNote" className="revealable" >A Note from The Admin:</h2>
+                                <h4 className="revealable"  style={Object.assign({}, leftRem)}>I do Consider Myself the <span style={note}>Johannes Gütenberg of Worm Generation</span>, the <span style={note}>Steve Jobs of Generated Worm Farming</span></h4>
+                                <p className="revealable" style={Object.assign({}, leftTwoRem)}>The every-day average person deserves to harness the power of p5.js to generate aesthetically pleasing worms.  It is an essential truth, a given right.  That is why I followed like one or two p5.js guides and then created a variation of a simple program that is found in many 'how to p5' blog posts and put it on a Ruby on Rails application with a ReactJS front-end that utilizes Redux state management and Material-UI.  In fact I spent very little time on the p5 program itself.  The whole point of this is, for one, that I myself learn more about full stack development, and for two, to start a trend in which the developers of generative art make a fair effort to give others the ability to use and save the outputs of the programs they created, not only at a level for fellow-developers, but at a level for end-users alike.  It is time for this power of this art form to be in the hands of many.  </p>
+                                <p className="revealable"  style={Object.assign({}, leftTwoRem)}>Do with this what you will, but remember: with great power comes great responsibility. </p>
                                 <Link spy={true} smooth={true}  duration={500} activeClass="active"></Link>
                             </div>
                         </section>
                         <hr />
-                        <section style={flexCol}>
+                        <section id="wormCreateection" style={flexCol}>
                             <div>
                                 <Element id="tryIt" name="tryIt" to="wormGallHead"></Element>
-                                <h2 style={tryItOut} id="tryIt">Generate Worms</h2>
+                                <h2  className="revealable" style={tryItOut} id="tryIt">Farm Worms</h2>
                                 <span style={generateWormsPContainer}>
-                                    <p style={textCenter}>Just click or tap on the screen to start spawning a worm.  Hold down and drag.  Release to complete the worm.</p>
+                                    <p style={textCenter} className="revealable" >Just click or tap on the screen to start spawning a worm.  Hold down and drag.  Release to complete the worm.</p>
                                 </span>
-                                <WormCreator dispatch={dispatch} currentUser={user} currentUserToken={token} currentUserId={userID} currentUserActivated={user_active} wormCreateCaptchaVerified={rcaptcha_state.createWorm.createWormRecaptchaVerified} />
+                                <WormCreator className="revealable"  dispatch={dispatch} currentUser={user} currentUserToken={token} currentUserId={userID} currentUserActivated={user_active} wormCreateCaptchaVerified={rcaptcha_state.createWorm.createWormRecaptchaVerified} wormCurrentlySaving={worm_currently_saving} wormFinishedSaving={worm_finished_saving} />
                                 <div id="newWormContainer"></div>
                                 <Link spy={true} smooth={true} duration={500} to="topOfPage" activeClass="active"></Link>
                             </div>
@@ -344,27 +343,40 @@ export default function Home(props){
                     </div>
                     <div>
                         <div>
-                            <section>
+                            <section id="wormGalSection">
                                 <Element id="wormGallHead" name="wormGallHead" ></Element>
-                                <h2 style={wormGallaryHeader} id="wormGallHead">
-                                    Worm Gallary
+                               
+                                <h2 className="revealable" style={wormGallaryHeader} id="wormGallHead">
+                                    The Farm
+                                    {
+                                    !user_logged_in &&
+                                        <p>Sign Up or Log On to have a look at the current state of The Farm</p>
+                                    }
                                     <span style={viewIconsContainer}>
-                                        <span style={spanPad}>
-                                            <ViewCarouselIcon onClick={ (e) => dispatch(changeView('carousel', dispatch))} style={view1 != 'list' ? activeIcon : {}} />
-                                            <ListIcon onClick={ (e) => dispatch(changeView('list', dispatch)) } style={view1 == 'list' ? activeIcon : {} }  />
+                                        <div id="wormListLoader" className="loader">
+                                            <div className="circle load1 whiteBG" />
+                                            <div className="circle load2 whiteBG" />
+                                            <div className="circle load3 whiteBG" />
+                                        </div>  
+                                        <span style={spanPad} className="revealable" >
+                                            <ViewCarouselIcon className="btn-grad2" onClick={ (e) => dispatch(changeView('carousel', dispatch))} style={view1 != 'list' ? activeIcon : {}} />
+                                            <ListIcon className="btn-grad2" onClick={ (e) => dispatch(changeView('list', dispatch)) } style={view1 == 'list' ? activeIcon : {} }  />
                                         </span>
                                         <hr />
                                         <span style={spanPad} >
-                                            <FavoriteBorder onClick={(e) => dispatch(filterByFavorite(document.getElementById("userID").value))} style={list_fil == "favorite" ? activeIcon : {}} />
-                                            <PersonOutlineSharpIcon onClick={(e) => dispatch(filterByCurrentUser(document.getElementById("userID").value))} style={list_fil == "current_user" ? activeIcon : {}} />
+                                            <FavoriteBorder className="btn-grad2" onClick={(e) => dispatch(filterByFavorite(document.getElementById("userID").value))} style={list_fil == "favorite" ? activeIcon : {}} />
+                                            <PersonOutlineSharpIcon className="btn-grad2" onClick={(e) => dispatch(filterByCurrentUser(document.getElementById("userID").value))} style={list_fil == "current_user" ? activeIcon : {}} />
                                             {
                                                 list_fil !== "none" &&
-                                                <RotateLeftIcon onClick={(e) => dispatch(resetFilter())} />
+                                                <RotateLeftIcon className="btn-grad2" onClick={(e) => dispatch(resetFilter())} />
                                             }
                                         </span>
                                     </span>
                                 </h2>
-                                <WormList />
+                                {
+                                    user_logged_in &&
+                                    <WormList />
+                                }
                             </section>
                         </div>
                     </div>

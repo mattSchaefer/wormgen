@@ -4,7 +4,7 @@ import { Button, TextField } from '@material-ui/core';
 import { useStore, useSelector, useDispatch } from 'react-redux';
 import store from '../store/store';
 import { fetchWorms } from '../features/wormList/wormListSlice';
-import { getWorms, worms, current_page, total_pages, displayedWorms, view, filteredWorms, viewingWormId } from '../features/wormList/wormListSlice';
+import { getWorms, worms, current_page, total_pages, displayedWorms, view, filteredWorms, viewingWormId, deleteWormRequestPendingForID } from '../features/wormList/wormListSlice';
 import { toggleFavorID, closeView, viewWorm } from '../features/wormList/wormListSlice';
 import { animateScroll as scroll, scrollSpy, scroller, Events, Element } from 'react-scroll';
 import { addMultiWormsToList } from '../features/wormList/wormListSlice';
@@ -28,6 +28,10 @@ const viewIconsContainer = {
 }
 const wormListContainer = {
     minHeight: '78vh',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
 }
 const dontDisplay = {
     display: 'none',
@@ -41,6 +45,9 @@ const closeWormIcon = {
     top: '18rem',
     right: '15.5rem',
     transition: '.3s ease-out',
+    background: 'black',
+    border: '2px solid black',
+    borderRadius: '30px',
 }
 export default function WormList(props){
     const dispatch = useDispatch(); 
@@ -56,6 +63,7 @@ export default function WormList(props){
     var totalPages = useSelector(total_pages)
     var view1 = useSelector(view)
     var favIDToggle = useSelector(toggleFavorID)
+    var delIDToggle = useSelector(deleteWormRequestPendingForID)
     var listOfWorms2 = [];
     var wormsListCopy2 = Array.from(displayedWormsList);
     var viewID = useSelector(viewingWormId)
@@ -89,7 +97,7 @@ export default function WormList(props){
         )
     }
     return(
-        <div style={wormListContainer}>
+        <div style={wormListContainer} id="" className={view1 == 'list' ? 'listAndPaginateRow' : 'listAndPaginateCol'}>
             <div style={view1 == 'list' ? flexWrap : carouselStyle } id="mainWormList">
                 {
                     wormsListCopy2.length > 0 &&
@@ -97,7 +105,7 @@ export default function WormList(props){
                             {   
                                 viewID != 1000000 && 
                                 <span onClick={(e) => closeTheView(1000000)}>
-                                    <CloseSharpIcon style={closeWormIcon}  />
+                                    <CloseSharpIcon style={closeWormIcon}  className="btn-grad2" />
                                 </span>
                             }
                                 
@@ -112,6 +120,7 @@ export default function WormList(props){
             </div>
             {totalPages != 0 && <Pagination total_pages={totalPages} current_page={currentPage} />}
             <TextField id="favWormToggleID" value={favIDToggle} style={dontDisplay} />
+            <TextField id="delWormID" value={delIDToggle} style={dontDisplay} />
         </div>
     )
 };

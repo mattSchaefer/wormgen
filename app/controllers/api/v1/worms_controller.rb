@@ -1,10 +1,14 @@
 class Api::V1::WormsController < ApplicationController
-    skip_before_action :require_token, :only => [:create, :add_to_user]# :verify_authenticity_token,
+    skip_before_action :require_token, :only => [:add_to_user]# :verify_authenticity_token,
     protect_from_forgery with: :null_session
     def index
         @worms = Worm.order(created_at: :asc)
         @worms_copy = []
-        if @worms.length > 0
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, worm_params[:user_id].to_s)
+        new_token = build_token(worm_params[:user_id])
+        if @worms.length > 0 && authorized_token[:message] == 'authorized'
             @worms.each do |worm|
                 user = {
                     user_id: worm.user_id,
@@ -24,7 +28,9 @@ class Api::V1::WormsController < ApplicationController
             render json: {
                 worms: @worms_copy,
                 status: 200,
-                message: "here's the worms"
+                message: "here's the worms",
+                authorized_token: authorized_token,
+                new_token: new_token
             }
         else
             render json: {
@@ -43,26 +49,47 @@ class Api::V1::WormsController < ApplicationController
     end
     def favorite_for_user
         @worm = Worm.find_by_id(worm_params[:id])
-        if(User.find(worm_params[:favorited_by]).activated && @worm.favorited_by_user(worm_params[:favorited_by], worm_params[:id]))
-            worm2 = Worm.find_by_id(worm_params[:id])
-            render json: {
-                worm: worm2,
-                message: "SUCCESS",
-                status: 205
-            }
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, worm_params[:favorited_by].to_s)
+        new_token = build_token(worm_params[:favorited_by])
+        if authorized_token[:message] == 'authorized'
+            if(User.find(worm_params[:favorited_by]).activated && @worm.favorited_by_user(worm_params[:favorited_by], worm_params[:id]))
+                worm2 = Worm.find_by_id(worm_params[:id])
+                render json: {
+                    worm: worm2,
+                    message: "SUCCESS",
+                    status: 205,
+                    new_token: new_token
+                }
+            else
+                render json: {message: 'there was an issue favoriting that worm :/', status: 500}
+            end
         else
             render json: {message: 'there was an issue favoriting that worm :/', status: 500}
         end
     end
     def unfavorite_for_user
         @worm = Worm.find_by_id(worm_params[:id])
-        if(@worm.unfavorited_by_user(worm_params[:favorited_by], worm_params[:id]))
-            worm2 = Worm.find_by_id(worm_params[:id])
-            render json: {
-                worm: worm2,
-                message: 'SUCCESS',
-                status: 205
-            }
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, worm_params[:favorited_by].to_s)
+        new_token = build_token(worm_params[:favorited_by])
+        if authorized_token[:message] == 'authorized'
+            if(@worm.unfavorited_by_user(worm_params[:favorited_by], worm_params[:id]))
+                worm2 = Worm.find_by_id(worm_params[:id])
+                render json: {
+                    worm: worm2,
+                    message: 'SUCCESS',
+                    status: 205,
+                    new_token: new_token
+                }
+            else
+                render json: {
+                    message: 'there was an issue unfavoriting that worm :/', 
+                    status: 500
+                }
+            end
         else
             render json: {
                 message: 'there was an issue unfavoriting that worm :/', 
@@ -76,14 +103,35 @@ class Api::V1::WormsController < ApplicationController
         # if worm_params[:image]
         #     @worm.image.attach(worm_params[:image])
         # end
-        if @worm.save && @worm.add_to_user(worm_params[:user_id])
-            render json: @worm
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, worm_params[:user_id].to_s)
+        new_token = build_token(worm_params[:user_id])
+        if authorized_token[:message] == 'authorized'
+            if @worm.save && @worm.add_to_user(worm_params[:user_id])
+                render json: {worm: @worm, new_token: new_token}
+            else
+                render json: {message: 'worm creation/association FAIL (X)~(X)'}
+            end
         else
             render json: {message: 'worm creation/association FAIL (X)~(X)'}
         end
     end
+    def delete_worm
+        respond_to :html, :json, :xml
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, worm_params[:user_id].to_s)
+        new_token = build_token(worm_params[:user_id])
+        @worm = Worm.find_by_id(worm_params[:id])
+        if authorized_token[:message] == 'authorized' && @worm.user_id.to_s == worm_params[:user_id].to_s && @worm.destroy 
+            render json: {message: 'worm has been yeeted', status: 200}
+        else
+            render json: {message: 'there was an issue yeeting that worm', status: 401}
+        end
+    end
     private
         def worm_params
-            params.permit(:name, :user_id, :data_url, :public, :favorited_by, :id)
+            params.permit(:name, :user_id, :data_url, :public, :favorited_by, :id, :worm)
         end
 end

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post '/logout', to: 'auth#logout'
       put '/favorite-worm', to: 'worms#favorite_for_user'
       put '/unfavorite-worm', to: 'worms#unfavorite_for_user'
+      put '/delete-worm', to: 'worms#delete_worm'
     end
   end
 end

@@ -12,7 +12,26 @@ const carouselPaginateSpan = {
     flexDirection: 'row',
     justifyContent: 'center',
 }
-const listPaginateSpan = {}
+const activePage = {
+    height: "fit-content", 
+    color: "white !important",
+    textDecoration: "none !important",
+    backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
+    padding: "5px",
+    textAlign: "center",
+    transition: "0.3s ease-in",
+    backgroundSize: "200% auto",
+    borderRadius: "20px",
+}
+const pageButton = {
+    transition: '.3s ease-out',
+}
+const listPaginateSpan = {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundImage: 'none',
+    backgroundSize: '',
+}
 export default function(props){ 
     var num_pages = props.total_pages
     const dispatch = useDispatch()
@@ -27,12 +46,12 @@ export default function(props){
     }
     if(pagination_button_indexes.length > 0 && wormListView == 'list'){
         pagination_buttons = pagination_button_indexes.map((index)=>
-            <Button className="btn-grad" key={index} onClick={() => changeThePageAndScroll(index)} style={paginationButton}>{index}</Button>
+            <Button className="btn-grad2 revealable" key={index} onClick={() => changeThePageAndScroll(index)} style={index == currentWormPage? activePage : pageButton}>{index}</Button>
         )
     }else{
         pagination_buttons = [
-            <Button className="btn-grad" onClick={() => changeThePageAndScroll(curr_worm_min_1)} style={paginationButton}>{'<<<'}</Button>,
-            <Button className="btn-grad" onClick={() => changeThePageAndScroll(curr_worm_plus_1)} style={paginationButton}>{'>>>'}</Button>
+            <Button className="btn-grad2" onClick={() => changeThePageAndScroll(curr_worm_min_1)} style={paginationButton}>{'<<<'}</Button>,
+            <Button className="btn-grad2" onClick={() => changeThePageAndScroll(curr_worm_plus_1)} style={paginationButton}>{'>>>'}</Button>
         ]
     }
     function changeThePageAndScroll(index){
@@ -44,15 +63,16 @@ export default function(props){
             isDynamic: true
         }
        dispatch(changePage(index))
-        setTimeout(() => scroller.scrollTo("wormGallHead", options), 100)
+       if(wormListView == 'list')
+            setTimeout(() => scroller.scrollTo("wormGallHead", options), 100)
     }
     return(
         <span>
             <span style={wormListView == 'list' ? listPaginateSpan : carouselPaginateSpan }>
-                {wormListView == 'list' && pagination_buttons}
-                {wormListView != 'list' && pagination_buttons}
+                {wormListView == 'list' && props.total_pages > 0 && pagination_buttons}
+                {wormListView != 'list' && props.total_pages > 0 && pagination_buttons}
             </span>
-            {pagination_buttons.length > 0 && <p style={currentPageSpan}>current page: {props.current_page} total page: {props.total_pages - 1}</p>}
+            
             
         </span>
     )

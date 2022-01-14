@@ -3,7 +3,8 @@ import WormList from './WormList';
 import P5 from 'p5';
 import { Button, Textfield } from '@material-ui/core';
 import ReactDOM from 'react-dom';
-import { fetchWorms } from '../features/wormList/wormListSlice';
+import { fetchWorms, setSaveWormRequestPending } from '../features/wormList/wormListSlice';
+import { } from '../features/wormList/wormListSlice';
 import { useSelector } from 'react-redux';
 import { current_user, current_user_token, current_user_id } from '../features/auth/authSlice';
 import NewWormAttrs from './NewWormAttrs';
@@ -27,6 +28,10 @@ const buttonContainer = {
 const saveWormButton = {
     width: "330px",
     marginTop: "-5px",
+}
+const captchaErrorMessage = {
+    display: 'none',
+    width: '82%',
 }
 export function DispatchSavedWorm(props){
     const dispatch = useDispatch();
@@ -129,6 +134,8 @@ export default class WormCreator extends React.Component{
         };
         sketch.saveWorm = (e) => {
             if(this.props.wormCreateCaptchaVerified == 'yes'){
+                document.getElementById('saveWormButton').setAttribute('disabled', "disabled")
+                document.getElementById('wormCreateLoader').style.visibility = 'visible';
                 const img = canvas.get();
                 img.save(sketch.frameCount, '.png');
                 console.log("saved image from sketch 2");
@@ -137,7 +144,7 @@ export default class WormCreator extends React.Component{
                 this.pushWormToDB(img2_url);
                 return img;
             }else{
-                alert("please verify the captcha")
+                document.getElementById('saveWormRecaptchaErrorMessage').classList.add('recaptcha-error-active')
             }
         };
         sketch.exportWorm = (e) => {
@@ -147,7 +154,12 @@ export default class WormCreator extends React.Component{
     pushWormToDB(img_data){
         const url = "/api/v1/worms";
         const name = document.getElementById('new-worm-name').value || "untitled";
+        const token = document.getElementById('token').value
+        const user_id = document.getElementById('userID').value
+        const csrf = document.querySelector('meta[name="csrf-token"]').content
+        const bearer = "Bearer " + token
         //const user_id = current_user || 1;
+        this.props.dispatch(setSaveWormRequestPending)
         const options = {
             method: 'POST',
             body: JSON.stringify({
@@ -155,13 +167,16 @@ export default class WormCreator extends React.Component{
                 user_id: this.props.currentUserId,
                 data_url: img_data
             }),
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+            headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': bearer, 'X-CSRF-Token': csrf}
         }
         fetch(url, options)
             .then((response) => response.json())
             .then((json) => {
                 console.log(json)
+                document.getElementById('token').value = json.new_token.token
                 this.props.dispatch(fetchWorms)
+                document.getElementById('new-worm-name').value = ''
+                document.getElementById('wormCreateLoader').style.visibility = 'hidden';
             })
             .catch((e) => console.log(e))
     }
@@ -174,21 +189,32 @@ export default class WormCreator extends React.Component{
             document.getElementById('uniqueRecaptchaSaveWormToken').value = token
             console.log(token)
             setTimeout(function(){
-                dispatch(verifyCreateWormRecaptcha)
+                dispatch(verifyCreateWormRecaptcha).then(()=>document.getElementById('saveWormRecaptchaErrorMessage').classList.remove('recaptcha-error-active'))
             },1000)
         }
         return(
             <span>
-                <div ref={this.myRef} style={homePageCanvas}></div>
+                <div ref={this.myRef} style={homePageCanvas} className="revealable" id="mainCanvas" onClick={(e) => e.preventDefault()} ></div>
                 <div>
                     <NewWormAttrs user={this.props.currentUser} />
-                    <ReCaptchaV2 theme="dark" id="createWormCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleCreateWormCaptchaChange(token, this.props.dispatch)}} onExpire={(e) => {handleCaptchaExpire()}} />
+                    <span id="saveWormRecaptchaErrorMessage" style={captchaErrorMessage}>
+                        please verify the captcha
+                    </span>
+                    {
+                        this.props.currentUser != 'anon' &&
+                        <ReCaptchaV2  className="revealable" theme="dark" id="createWormCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleCreateWormCaptchaChange(token, this.props.dispatch)}} onExpire={(e) => {handleCaptchaExpire()}} />
+                    }
                     <span style={buttonContainer}>
                         {
-                            this.props.currentUserActivated == 'yes' &&
-                            <span style={buttonContainer}>
-                                <Button className="btn-grad" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton">save worm</Button>
-                                <Button className="btn-grad" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.exportWorm(e)} id="exportWormButton">export worm</Button>
+                            this.props.currentUserActivated == 'yes' && this.props.currentUser != 'anon' &&
+                            <span style={buttonContainer} className="wormCreateButtonContainer">
+                                <Button className="btn-grad revealable" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton" disabled={ (this.props.wormCurrentlySaving == 'yes' || !document.getElementById('new-worm-name').value) ? true : false} >save worm</Button>
+                                <Button className="btn-grad revealable" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.exportWorm(e)} id="exportWormButton">export worm</Button>
+                                <div id="wormCreateLoader" className="loader">
+                                    <div className="circle load1 whiteBG" />
+                                    <div className="circle load2 whiteBG" />
+                                    <div className="circle load3 whiteBG" />
+                                </div>
                             </span>
                         }
                     </span>

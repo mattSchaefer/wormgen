@@ -2,6 +2,7 @@ class Api::V1::UsersController < Api::V1::AuthController
     #skip_before_action :verify_authenticity_token, :only => [:create, :update, :index]
     skip_before_action :require_token, :only => [:create]
     before_action :validate_email_update, :only => [:update]
+    protect_from_forgery with: :null_session
     include Token
     def new
         @user = User.new(user_params)
@@ -28,12 +29,17 @@ class Api::V1::UsersController < Api::V1::AuthController
     def activate_account
         if user_params[:token]
             @user = User.find_by(activation_token: user_params[:token])
-            if @user
+            user_id = @user.id
+            header = request.headers['Authorization'] || ''
+            token = header.split(' ').last
+            authorized_token = authorize_token(token, user_id.to_s)
+            new_token = build_token(user_id)
+            if @user && authorized_token[:message] == 'authorized'
                 activation_valid = (@user.activation_token == user_params[:token]) && ((@user.activation_sent_at + 4.hours) > Time.now.utc)
                 if activation_valid
                     @user.activated = true
                     if @user.save!
-                        render json: {message: 'account successfully activated', status: 200}, status: :ok
+                        render json: {message: 'account successfully activated', status: 200, new_token: new_token}, status: :ok
                     else
                         render json: {errors: 'error', status: 401}, status: :bad_request
                     end
@@ -49,8 +55,12 @@ class Api::V1::UsersController < Api::V1::AuthController
     end
     def set_unconfirmed_email
         if user_params[:email]
-            #send email instructions and reset email token? to new email address.  prompt the user to 'update email', supply the code and authenticate with password
-            if user_params[:new_email]
+            user_id = User.find_by(email: user_params[:email]).id
+            header = request.headers['Authorization'] || ''
+            token = header.split(' ').last
+            authorized_token = authorize_token(token, user_id.to_s)
+            new_token = build_token(user_id)
+            if user_params[:new_email] && authorized_token[:message] == 'authorized'
                 user = User.find_by(email: user_params[:email])
                 already_taken = User.find_by(email: [user_params[:new_email]])
                 pending_taken = User.find_by(unconfirmed_emil: user_params[:new_email])
@@ -62,7 +72,7 @@ class Api::V1::UsersController < Api::V1::AuthController
                         if user.save!
                             @reset_token = user.reset_email_token
                             UserMailer.with(reset_token: @reset_token, old_email: user_params[:email], new_email: user_params[:new_email]).reset_email_email.deliver_now
-                            render json: {status: 200, message: 'unconfirmed email set and instructions sent', email: user_params[:new_email]}, status: :ok
+                            render json: {status: 200, message: 'unconfirmed email set and instructions sent', email: user_params[:new_email], new_token: new_token}, status: :ok
                         else
                             render json: {errors: 'error', status: 401}, status: :bad_request
                         end
@@ -82,14 +92,19 @@ class Api::V1::UsersController < Api::V1::AuthController
     def email_update
         email = params[:email].to_s
         user = User.find_by(unconfirmed_emil: email)
+        user_id = user.id
+        header = request.headers['Authorization'] || ''
+        token = header.split(' ').last
+        authorized_token = authorize_token(token, user_id.to_s)
+        new_token = build_token(user_id)
         user_email_confirmation_token_valid = (user.reset_email_token == params[:token]) && ((user.reset_email_sent_at + 4.hours) > Time.now.utc)
-        if !user || !user_email_confirmation_token_valid
+        if !user || !user_email_confirmation_token_valid || authorized_token[:message] != 'authorized'
             render json: {error: 'there is an issue with that suspicious link...', status: 401}
         else
             user.email = user.unconfirmed_emil
             user.unconfirmed_emil = ''
             if user.save!
-                render json: {status: 200, message: 'email updated successfully', email: user.email}, status: :ok
+                render json: {status: 200, message: 'email updated successfully', email: user.email, new_token: new_token}, status: :ok
             else
                 render json: {status: 401, body: "oops"}
             end

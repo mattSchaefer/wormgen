@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button, TextField } from '@material-ui/core';
 import { view, worms, filteredWorms } from '../features/wormList/wormListSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { pageStart, pageEnd, viewingWormId } from '../features/wormList/wormListSlice';
-import {favoriteWorm, unfavoriteWorm, closeView, viewWorm} from '../features/wormList/wormListSlice';
+import { pageStart, pageEnd, viewingWormId, favUnfavWormRequestPending, favUnfavWormRequestPendingForID, setDeleteWormRequestPending, deleteWormRequestPendingForID, deleteWormRequestPending } from '../features/wormList/wormListSlice';
+import {favoriteWorm, unfavoriteWorm, closeView, viewWorm, deleteWorm} from '../features/wormList/wormListSlice';
+import {setFavoriteWormRequestPending} from '../features/wormList/wormListSlice';
 import { current_user_id } from '../features/auth/authSlice';
 import { isFlowPredicate } from '@babel/types';
 import Favorite from '@material-ui/icons/Favorite';
@@ -61,7 +62,7 @@ const wormContainerCarousel = {}
 const nonTitleWormAttrs = {
     paddingLeft: '5px',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     transition: '.2s ease-out',
     justifyContent: 'space-between',
     width: '100%',
@@ -95,8 +96,7 @@ const redOutline = {
 }
 const bigworm = {
     position: 'fixed',
-    top: '19rem',
-    scale: '1.88',
+    top: '18vh',
     zIndex: '30000',
     display: 'flex',
     flexDirection: 'column',
@@ -105,18 +105,28 @@ const bigworm = {
     paddingBottom: '1rem',
     marginBottom: '2rem',
     //background: 'rgb(35,45,61)',
-    background: "#eee",
+    background: "#eee !important",
     marginRight: '1rem',
     transition: '.2s ease-out',
     WebkitBoxShadow: "2px 1px 8px 44px #000000", 
     boxShadow: "2px 1px 8px 44px #000000",
     MozBoxShadow: "2px 1px 8px 44px #000000",
 }
+const bigwormIMG = {
+    width: 'auto',
+}
 const closeWormIcon = {
     color: 'black',
     zIndex: '30000',
     position: 'absolute',
     right: '-100px',
+}
+const flexRowBet = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
 }
 export default function Worm(props){
     const dispatch = useDispatch();
@@ -127,6 +137,10 @@ export default function Worm(props){
     var viewID = useSelector(viewingWormId);
     var currentUser = useSelector(current_user_id)
     var fil_worms = useSelector(filteredWorms) || []
+    var fav_worm_pending = useSelector(favUnfavWormRequestPending)
+    var pending_favorite_for = useSelector(favUnfavWormRequestPendingForID)
+    var del_worm_pending = useSelector(deleteWormRequestPending)
+    var del_pending_for = useSelector(deleteWormRequestPendingForID)
     var fil_worms_arr = Array.from(fil_worms)
     var carousel_index= props.index//(props.totalLen - props.wormID) % 3;
     if(fil_worms_arr && fil_worms_arr.length > 0)
@@ -134,30 +148,30 @@ export default function Worm(props){
     //props.totalLen % 2 == 0 ? carousel_index = props.wormID % 3 + 1 : carousel_index = props.wormID % 3;
     var fav_by_user_arr=[]
     function toggleFavorite(){
+        dispatch(setFavoriteWormRequestPending(props.wormID))
         fav_by_user_arr = props.favorited_by ? props.favorited_by.split(',').find((i) => i == currentUser) : []
         document.getElementById('favWormToggleID').value = props.wormID
         if(fav_by_user_arr.length > 0 || fav_by > 0){
             //fav_by--
             //document.getElementById('favBy').innerText = (fav_by).toString()
-            
             dispatch(unfavoriteWorm).then(()=>{
                 setTimeout(function(){
-                    dispatch(fetchWorms)
+                    dispatch(fetchWorms).then(()=>dispatch(setFavoriteWormRequestPending(props.wormID)))
                 },3000)
-                
             })
         }else{
             //fav_by++
             //document.getElementById('favBy').innerText = (fav_by).toString()
             dispatch(favoriteWorm).then(()=>{
                 setTimeout(function(){
-                    dispatch(fetchWorms)
+                    dispatch(fetchWorms).then(()=>dispatch(setFavoriteWormRequestPending(props.wormID)))
                 },3000)
              })  
         }
+        
     }
     function viewThisWorm(ID){
-        if(view1 == 'list'){
+        if(view1 == 'list' && window.screen.width > 800){
             dispatch(viewWorm(ID))
             document.getElementById(ID).classList.remove('wormListItem')
         }
@@ -169,12 +183,26 @@ export default function Worm(props){
         
         document.getElementById(props.wormID).classList.add('wormListItem')
     }
+    function deleteThisWorm(){
+        dispatch(setDeleteWormRequestPending(props.wormID))
+        document.getElementById('delWormID').value = props.wormID
+        document.getElementById(props.wormID).classList.remove('wormListItem')
+        dispatch(deleteWorm).then(()=>{
+            setTimeout(function(){
+                dispatch(fetchWorms).then(() => {
+                    setTimeout(function(){
+                        dispatch(setDeleteWormRequestPending(-1))
+                    },750)
+                })
+            },3000)
+         }) 
+    }
     return (
-        <div style={ props.wormID == pageStart1 ? tiltStart : props.wormID == pageEnd1 ? tiltEnd : props.wormID == viewID ? bigworm : flexWorm } id={props.wormID} className={view1 == 'carousel' ? "wormCarousel_"+carousel_index : view1 == 'list' && viewID == 1000000 ? 'wormListItem' : ""} onClick={(e) => viewThisWorm(props.wormID)}>
+        <div style={ props.wormID == pageStart1 ? tiltStart : props.wormID == pageEnd1 ? tiltEnd : props.wormID == viewID ? bigworm : flexWorm } id={props.wormID} className={view1 == 'carousel' ? "wormCarousel_"+carousel_index : view1 == 'list' && viewID == 1000000 ? 'wormListItem' : ""} >
        
             { props.src && 
-            <span style={view1 == 'list' ? wormContainer : wormContainerCarousel }>
-                <img className="worm-image" src={props.src} style={view1 == 'list' ? wormStyle : wormStyleCarousel} download></img>
+            <span style={view1 == 'list' ? wormContainer : wormContainerCarousel } className="revealable activate-revealable">
+                <img className="worm-image" src={props.src} style={props.wormID == viewID ? bigwormIMG: view1 == 'list' ? wormStyle : wormStyleCarousel} download onClick={(e) => viewThisWorm(props.wormID)}></img>
                 <div style={wormInfoContainer}>
                     <p style={Object.assign({},wormTitle, wormAttr)}>{props.name}</p>
                     <span style={nonTitleWormAttrs}>
@@ -189,20 +217,49 @@ export default function Worm(props){
                                     c.a. {props.date.substring(0, props.date.indexOf('T'))} a.d.
                                 </span>
                             </p>
-                            <a href={props.src} download={props.name}>Export Worm</a>
+                            
                         </span>
-                        <span>
-                            {/* {props.favorited_by && props.favorited_by.length > 0 ? props.favorited_by.split(',').length : "0"} */}
-                            <span id="favBy">{fav_by}</span>
-                            {
-                                fav_by_user_arr.length == 0 && fav_by == 0 &&
-                                <FavoriteBorder style={redOutline} onClick={() => toggleFavorite()}/>
-                            }
-                            {
-                                fav_by_user_arr.length > 0 || fav_by > 0 &&
-                                <Favorite style={redFill} onClick={() => toggleFavorite()}/>
-                            }
+                        <span style={flexRowBet}>
+                                {
+                                    props.author == currentUser &&
+                                    <a href={props.src} download={props.name}>Export Worm</a>
+                                }
+                                {
+                                    props.author == currentUser && del_worm_pending == 'no' &&
+                                    <span className="actually-link" onClick={() => deleteThisWorm()}>Delete Worm</span>
+                                }
+                                {
+                                    (del_worm_pending == 'yes' && props.wormID == del_pending_for ) &&
+                                    <div id="favoriteWormLoader" className="loader">
+                                        <div className="circle load1 whiteBG" />
+                                        <div className="circle load2 whiteBG" />
+                                        <div className="circle load3 whiteBG" />
+                                    </div> 
+                                }
                         </span>
+                        {
+                            (fav_worm_pending == 'no' || props.wormID !== pending_favorite_for )&&
+                            <span>
+                                {/* {props.favorited_by && props.favorited_by.length > 0 ? props.favorited_by.split(',').length : "0"} */}
+                                <span id="favBy">{fav_by}</span>
+                                {
+                                    fav_by_user_arr.length == 0 && fav_by == 0 &&
+                                    <FavoriteBorder style={redOutline} onClick={() => toggleFavorite()}/>
+                                }
+                                {
+                                    fav_by_user_arr.length > 0 || fav_by > 0 &&
+                                    <Favorite style={redFill} onClick={() => toggleFavorite()}/>
+                                }
+                            </span>
+                        }
+                        {
+                            (fav_worm_pending == 'yes' && props.wormID == pending_favorite_for ) &&
+                            <div id="favoriteWormLoader" className="loader">
+                                <div className="circle load1 whiteBG" />
+                                <div className="circle load2 whiteBG" />
+                                <div className="circle load3 whiteBG" />
+                            </div> 
+                        }
                     </span>
                 </div>
             </span>

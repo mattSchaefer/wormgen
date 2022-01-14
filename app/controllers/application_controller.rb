@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
         validated_token = validate_token(token)
         if validated_token
         else
-            render json: {message: 'theres been an issue'}    
+            render json: {status: 401, message: 'unauthorized'}   
         end
     end
     def require_admin

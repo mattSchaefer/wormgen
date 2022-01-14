@@ -19,6 +19,10 @@ const contactForm = {
 const contactSubmit = {
     width: '50%',
 }
+const captchaErrorMessage = {
+    display: 'none',
+    width: '82%',
+}
 export default function Contact(props){
     const dispatch = useDispatch()
     const conState = useSelector(contactState)
@@ -27,7 +31,8 @@ export default function Contact(props){
         if(re_captcha_state.misc.contactSubmitRecaptchaVerified == 'yes')
             dispatch(submitContact)
         else
-            alert('please verify the captcha')
+        document.getElementById('submitContactRecaptchaErrorMessage').classList.add('recaptcha-error-active')
+
     }
     function handleContactSubmitCaptchaChange(token){
         document.getElementById('uniqueRecaptchaSubmitContactToken').value = token
@@ -41,14 +46,17 @@ export default function Contact(props){
             {
                 conState.requestResponse.status !== 200 &&
                 <div>
-                    <h5>Contact</h5>
-                    <p>Please fill out this form if you have any questions, comments, or concerns about this application, or if you would like to get into contact with its developer for any reason</p>
+                    <h5 className="revealable">Contact</h5>
+                    <p className="revealable">Please fill out this form if you have any questions, comments, or concerns about this application, or if you would like to get into contact with its developer for any reason</p>
                     <div style={contactForm}>
-                        <TextField label="email" id="contactFormEmail" />
-                        <TextField label="subject" id="contactFormSubject" />
-                        <TextField variabt="filled" multiline label="message" id="contactFormMessage" />
-                        <ReCaptchaV2 theme="dark" id="forgotPasswordCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleContactSubmitCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />          
-                        <Button className="btn-grad" variant="contained" color="primary" onClick={()=>formSubmit()} style={contactSubmit}>Submit </Button>
+                        <TextField label="email" id="contactFormEmail" className="revealable" />
+                        <TextField label="subject" id="contactFormSubject" className="revealable" />
+                        <TextField variabt="filled" multiline label="message" id="contactFormMessage" className="revealable" />
+                        <span id="submitContactRecaptchaErrorMessage" style={captchaErrorMessage}>
+                            please verify the captcha
+                        </span>  
+                        <ReCaptchaV2 theme="dark" id="forgotPasswordCaptcha" className="revealable" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleContactSubmitCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />      
+                        <Button className="btn-grad revealable" variant="contained" color="primary" onClick={()=>formSubmit()} style={contactSubmit}>Submit </Button>
                         <input type="hidden" id="uniqueRecaptchaSubmitContactToken" />
                     </div>
                 </div>

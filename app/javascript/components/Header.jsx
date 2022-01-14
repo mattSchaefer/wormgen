@@ -50,7 +50,7 @@ const flexColStart = {
 export default () => (
     <div style={headerWrap}>
         <div style={flexColStart}>
-            <h1 style={white}>wormcreate.com</h1>
+            <h1 style={white} id="mainHeader">friendlywormfarm.com</h1>
             <div style={hunnitHeight, flexColStart}>
                 {/* <Button style={eightyHeight, white, borderWhite} color="primary">
                     <div style={white}>Log In</div>

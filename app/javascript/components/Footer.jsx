@@ -21,6 +21,7 @@ const footerDiv={
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: '1rem',
+    marginTop: '8rem',
     
 }
 const flexBetween = {
@@ -66,6 +67,10 @@ const resetPasswordSubmitButton = {
     marginTop: '1rem',
     marginBottom: '1rem',
 }
+const captchaErrorMessage = {
+    display: 'none',
+    width: '82%',
+}
 export default function Footer(props){
     const dispatch = useDispatch()
     const user = useSelector(current_user)
@@ -78,19 +83,23 @@ export default function Footer(props){
     const user_logged_in = user != 'anon' && token.length > 0
     const re_captcha_state = useSelector(reCaptchaState)
     function forgotPasswordSubmit(){
+        document.getElementById('forgotPasswordLoader').style.visibility = 'visible';
         if(document.getElementById('forgotPasswordUiEmail').value && document.getElementById('forgotPasswordUiEmail').value.length > 0){
-            if(re_captcha_state.password.forgotPasswordRecaptchaVerified == 'yes')
+            if(re_captcha_state.password.forgotPasswordRecaptchaVerified == 'yes'){
                 dispatch(forgotPassword)
-            else
-                alert('please verify the captcha')
+            }else
+                document.getElementById('forgotPasswordRecaptchaErrorMessage').classList.add('recaptcha-error-active')
         }
+       
     }
     function resetPasswordSubmit(){
+        document.getElementById('resetPasswordLoader').style.visibility = 'visible';
         if(document.getElementById('resetPasswordUiEmail').value && document.getElementById('resetPasswordUiEmail').value.length > 0 && document.getElementById('resetPasswordUiPassword').value == document.getElementById('resetPasswordUiPasswordConfirm').value && document.getElementById('resetPasswordUiPasswordToken').value){
             if(re_captcha_state.password.resetPasswordRecaptchaVerified == 'yes')
                 dispatch(resetPasswordToken)
             else
-                alert('please verify the captcha')
+            document.getElementById('resetPasswordRecaptchaErrorMessage').classList.add('recaptcha-error-active')
+
         }
     }
     function handleForgotPasswordCaptchaChange(token){
@@ -108,8 +117,8 @@ export default function Footer(props){
         },1000)
     }
     return (
-        <div style={footerDiv}>
-            <div style={flexBetween}>
+        <div style={footerDiv} className="footer-container-1">
+            <div style={flexBetween} className="footer-container-2">
                 <Contact />
                 {
                     user_logged_in && 
@@ -117,7 +126,7 @@ export default function Footer(props){
                 }
                 {
                     forgot_password_view == 'yes' &&
-                    <div style={forgotResetPasswordDiv}>
+                    <div style={forgotResetPasswordDiv} className="forgotResetPassword">
                         {
                             forgot_password_response.status !== 'ok' &&
                             <span style={forgotResetPasswordSpan}>
@@ -126,8 +135,15 @@ export default function Footer(props){
                                 <p>Seems like a good deal, if you ask me.</p>
                                 <TextField id="forgotPasswordUiEmail" label="Account Email" />
                                 <br />
+                                <span id="forgotPasswordRecaptchaErrorMessage" style={captchaErrorMessage}>
+                                    please verify the captcha
+                                </span>  
                                 <ReCaptchaV2 theme="dark" id="forgotPasswordCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleForgotPasswordCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />
-                                    
+                                <div id="forgotPasswordLoader" className="loader">
+                                    <div className="circle load1 whiteBG" />
+                                    <div className="circle load2 whiteBG" />
+                                    <div className="circle load3 whiteBG" />
+                                </div>
                                 <Button className="btn-grad" variant="contained" color="primary" onClick={(e)=>forgotPasswordSubmit()} style={forgotPassSubmitButton} >Help!</Button>
                             </span>
                         }
@@ -143,21 +159,29 @@ export default function Footer(props){
                 }
                 {
                     reset_password_view == 'yes' &&
-                    <div style={forgotResetPasswordDiv}>
+                    <div style={forgotResetPasswordDiv} className="forgotResetPassword">
                         {
                             reset_password_response.status !== 'ok' && !user_logged_in &&
                             <span style={forgotResetPasswordSpan}>
                                 <h4>Reset Password</h4>
                                 <p>Supply the code we sent to you via email, confirm your new password and we'll get you all set.</p>
                                 <div style={totalWidth}>
-                                    <TextField id="resetPasswordUiEmail" label="Email:" style={totalWidth} />
-                                    <TextField id="resetPasswordUiPasswordToken" label="Code we sent you (no spaces):" style={totalWidth} />
+                                    <TextField id="resetPasswordUiEmail" className="revealable" label="Email:" style={totalWidth} />
+                                    <TextField id="resetPasswordUiPasswordToken" className="revealable" label="Code we sent you (no spaces):" style={totalWidth} />
                                     <br />
                                     <span style={totalWidth}>
-                                        <TextField id="resetPasswordUiPassword" label="Password:" style={totalWidth} />
-                                        <TextField id="resetPasswordUiPasswordConfirm" label="Password Confirmation:" style={totalWidth} />
+                                        <TextField id="resetPasswordUiPassword" className="revealable" label="Password:" style={totalWidth} />
+                                        <TextField id="resetPasswordUiPasswordConfirm" className="revealable" label="Password Confirmation:" style={totalWidth} />
                                     </span>
+                                    <span id="resetPasswordRecaptchaErrorMessage" style={captchaErrorMessage}>
+                                        please verify the captcha
+                                    </span>  
                                     <ReCaptchaV2 theme="dark" id="forgotPasswordCaptcha" sitekey={process.env.REACT_APP_RCAPTCHA_SITE_KEY} onChange={(token) => {handleResetPasswordCaptchaChange(token)}} onExpire={(e) => {handleCaptchaExpire()}} />
+                                    <div id="resetPasswordLoader" className="loader">
+                                        <div className="circle load1 whiteBG" />
+                                        <div className="circle load2 whiteBG" />
+                                        <div className="circle load3 whiteBG" />
+                                    </div>
                                     <Button className="btn-grad" variant="contained" color="primary" style={resetPasswordSubmitButton} onClick={(e)=>resetPasswordSubmit()}>LET ME IN</Button>
                                 </div>
                             </span>
@@ -174,17 +198,17 @@ export default function Footer(props){
                 <div>
                     <div style={socialsIconsOuterDiv}>
                         <span style={socialsIcons}>
-                            <InstagramIcon className="actually-link" />
-                            <LinkedInIcon className="actually-link" />
-                            <TwitterIcon className="actually-link" />
+                            <InstagramIcon className="actually-link revealable" />
+                            <LinkedInIcon className="actually-link revealable" />
+                            <TwitterIcon className="actually-link revealable" />
                         </span>
                         <span>
-                            <FreeBreakfastIcon className="actually-link" />
+                            <FreeBreakfastIcon className="actually-link revealable" />
                         </span>
                     </div>
                 </div>
             </div>
-            <p className="actually-link" style={center} onClick={(e)=>scroll.scrollToTop()}>
+            <p className="actually-link revealable" style={center} onClick={(e)=>scroll.scrollToTop()}>
                     Back to top
             </p>
             <p style={marginBottomNone}>If you require additional assistance using this application due its accessibility, please contact email@email.com, or fill out the above Contact form with an explanation of the problem and I will address it as soon as possible.  Thank you.</p>
