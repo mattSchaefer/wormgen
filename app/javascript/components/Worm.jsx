@@ -128,6 +128,12 @@ const flexRowBet = {
     alignItems: 'center',
     width: '100%',
 }
+const areYouSureButtonSpan={
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+}
+const red = {color: 'red',}
 export default function Worm(props){
     const dispatch = useDispatch();
     var fav_by = props.favorited_by ? props.favorited_by.split(',').filter(x => x.length > 0).length : 0
@@ -171,7 +177,7 @@ export default function Worm(props){
         
     }
     function viewThisWorm(ID){
-        if(view1 == 'list' && window.screen.width > 800){
+        if(view1 == 'list' && window.screen.width > 900){
             dispatch(viewWorm(ID))
             document.getElementById(ID).classList.remove('wormListItem')
         }
@@ -197,12 +203,24 @@ export default function Worm(props){
             },3000)
          }) 
     }
+    function neverMindDontDelete(){
+        document.getElementById('are-you-sure-delete-' + props.wormID).classList.add('hidden') 
+        document.getElementById('are-you-sure-delete-' + props.wormID).classList.remove('visible')
+        document.getElementById('delete-worm-link-' + props.wormID).classList.add('visible')
+        document.getElementById('delete-worm-link-' + props.wormID).classList.remove('hidden')
+    }
+    function deleteWormClick(){ 
+        document.getElementById('are-you-sure-delete-' + props.wormID).classList.add('visible')
+        document.getElementById('are-you-sure-delete-' + props.wormID).classList.remove('hidden')
+        document.getElementById('delete-worm-link-' + props.wormID).classList.add('hidden')
+        document.getElementById('delete-worm-link-' + props.wormID).classList.remove('visible')
+    }
     return (
         <div style={ props.wormID == pageStart1 ? tiltStart : props.wormID == pageEnd1 ? tiltEnd : props.wormID == viewID ? bigworm : flexWorm } id={props.wormID} className={view1 == 'carousel' ? "wormCarousel_"+carousel_index : view1 == 'list' && viewID == 1000000 ? 'wormListItem' : ""} >
        
             { props.src && 
             <span style={view1 == 'list' ? wormContainer : wormContainerCarousel } className="revealable activate-revealable">
-                <img className="worm-image" src={props.src} style={props.wormID == viewID ? bigwormIMG: view1 == 'list' ? wormStyle : wormStyleCarousel} download onClick={(e) => viewThisWorm(props.wormID)}></img>
+                <img className="worm-image" src={props.src} style={props.wormID == viewID ? bigwormIMG: view1 == 'list' ? wormStyle : wormStyleCarousel} download onClick={(e) => viewThisWorm(props.wormID)} alt={props.name}></img>
                 <div style={wormInfoContainer}>
                     <p style={Object.assign({},wormTitle, wormAttr)}>{props.name}</p>
                     <span style={nonTitleWormAttrs}>
@@ -222,11 +240,12 @@ export default function Worm(props){
                         <span style={flexRowBet}>
                                 {
                                     props.author == currentUser &&
-                                    <a href={props.src} download={props.name}>Export Worm</a>
+                                    <button className="nav-button" href={props.src} download={props.name} tabindex="0" role="button" >Export Worm</button>
                                 }
+                                <span>
                                 {
                                     props.author == currentUser && del_worm_pending == 'no' &&
-                                    <span className="actually-link" onClick={() => deleteThisWorm()}>Delete Worm</span>
+                                    <button className="actually-link delete-worm-link nav-button" id={"delete-worm-link-" + props.wormID.toString()} onClick={() => deleteWormClick()} tabindex="0"  role="button" >Delete Worm</button>
                                 }
                                 {
                                     (del_worm_pending == 'yes' && props.wormID == del_pending_for ) &&
@@ -236,6 +255,17 @@ export default function Worm(props){
                                         <div className="circle load3 whiteBG" />
                                     </div> 
                                 }
+                                {
+                                    props.author == currentUser && del_worm_pending == 'no' &&
+                                    <div className="hidden" id={"are-you-sure-delete-" + props.wormID.toString()}>
+                                        <p style={red}>Are you certain?</p>
+                                        <span style={areYouSureButtonSpan}>
+                                            <button className="actually-link nav-button" onClick={() => deleteThisWorm()} tabindex="0" role="button"  >yes</button>
+                                            <button className="actually-link nav-button" onClick={()=> neverMindDontDelete()} tabindex="0" role="button" >no</button>
+                                        </span>
+                                    </div>
+                                } 
+                            </span>
                         </span>
                         {
                             (fav_worm_pending == 'no' || props.wormID !== pending_favorite_for )&&
@@ -244,11 +274,11 @@ export default function Worm(props){
                                 <span id="favBy">{fav_by}</span>
                                 {
                                     fav_by_user_arr.length == 0 && fav_by == 0 &&
-                                    <FavoriteBorder style={redOutline} onClick={() => toggleFavorite()}/>
+                                    <button className="nav-button" onClick={() => toggleFavorite()} tabindex="0" role="button" ><FavoriteBorder style={redOutline}  /></button>
                                 }
                                 {
                                     fav_by_user_arr.length > 0 || fav_by > 0 &&
-                                    <Favorite style={redFill} onClick={() => toggleFavorite()}/>
+                                    <button onClick={() => toggleFavorite()} tabindex="0" role="button" className="nav-button"><Favorite style={redFill}  /></button>
                                 }
                             </span>
                         }

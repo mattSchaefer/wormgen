@@ -56,6 +56,7 @@ export async function activateAccount(dispatch){
     const activate_token = document.getElementById('activationCode').value || ''
     const bearer = document.getElementById('token').value
     const bearer_token = "Bearer " + bearer
+    //const rcaptcha_token = document.getElementById('uniqueRecaptchaActivateAccountToken').value
     const body = JSON.stringify({
         token: activate_token
     })
@@ -86,6 +87,7 @@ export async function forgotPassword(dispatch){
     const forgot_url = '/password/forgot'
     const csrf =  document.querySelector('meta[name="csrf-token"]').content
     const email = document.getElementById('forgotPasswordUiEmail').value
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaForgotPasswordToken').value.toString()
     const body = JSON.stringify({
         email: email
     })
@@ -95,7 +97,8 @@ export async function forgotPassword(dispatch){
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-CSRF-Token': csrf
+            'X-CSRF-Token': csrf,
+            'Captcha-Token': rcaptcha_token
         }
     }
     fetch(forgot_url, options)
@@ -119,6 +122,7 @@ export async function resetPasswordOldPass(dispatch){
     const new_password = document.getElementById('userProfileUiPassword').value
     const new_password_confirm = document.getElementById('userProfileUiPasswordConfirm').value
     const csrf =  document.querySelector('meta[name="csrf-token"]').content
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaChangePasswordToken').value.toString()
     const reset_url = '/password/reset-with-old'
     const bearer = "Bearer " + token
     const body = JSON.stringify({
@@ -132,7 +136,8 @@ export async function resetPasswordOldPass(dispatch){
             'Authorization': bearer,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-CSRF-Token': csrf
+            'X-CSRF-Token': csrf,
+            'Captcha-Token': rcaptcha_token
         },
         body: body
     }
@@ -155,6 +160,7 @@ export async function resetPasswordToken(dispatch){
     const new_pass = document.getElementById('resetPasswordUiPassword').value
     const reset_url = "/password/reset-with-token"
     const csrf = document.querySelector('meta[name="csrf-token"]').content
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaResetPasswordToken').value
     const body = JSON.stringify({
         email: email,
         token: password_token,
@@ -165,7 +171,8 @@ export async function resetPasswordToken(dispatch){
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-CSRF-Token': csrf
+            'X-CSRF-Token': csrf,
+            'Captcha-Token': rcaptcha_token
         },
         body: body
     }
@@ -189,6 +196,7 @@ export async function resetEmail(dispatch){
     const csrf = document.querySelector('meta[name="csrf-token"]').content
     const token = document.getElementById('token').value
     const bearer = 'Bearer ' + token
+    var rcaptcha_token = document.getElementById('uniqueRecaptchaChangeEmailToken').value
     var body = JSON.stringify({
         email: email,
         new_email: new_email,
@@ -200,7 +208,8 @@ export async function resetEmail(dispatch){
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrf,
-            'Authorization': bearer
+            'Authorization': bearer,
+            'Captcha-Token': rcaptcha_token
         },
         body: body
     }
@@ -224,6 +233,8 @@ export async function confirmUnconfirmedEmailWithToken(dispatch){
     const bearer_token = document.getElementById('token').value
     const bearer = "Bearer " + bearer_token
     const confirm_url = '/api/v1/users/email_update'
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaConfirmEmailToken').value
+
     var body = JSON.stringify({
         email: new_email,
         token: reset_token
@@ -234,7 +245,8 @@ export async function confirmUnconfirmedEmailWithToken(dispatch){
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrf,
-            'Authorization': bearer
+            'Authorization': bearer,
+            'Captcha-Token': rcaptcha_token
         },
         body: body
     }

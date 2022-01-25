@@ -42,12 +42,13 @@ const closeWormIcon = {
     right: '-100px',
     cursor: 'pointer',
     position: 'fixed',
-    top: '18rem',
-    right: '15.5rem',
+    top: '7rem',
+    right: '6.5rem',
     transition: '.3s ease-out',
     background: 'black',
     border: '2px solid black',
     borderRadius: '30px',
+    boxShadow: 'rgb(233 218 218 / 75%) 1px -3px 47px 0px',
 }
 export default function WormList(props){
     const dispatch = useDispatch(); 
@@ -105,11 +106,9 @@ export default function WormList(props){
                             {   
                                 viewID != 1000000 && 
                                 <span onClick={(e) => closeTheView(1000000)}>
-                                    <CloseSharpIcon style={closeWormIcon}  className="btn-grad2" />
+                                    <CloseSharpIcon style={closeWormIcon}  className="btn-grad2" tabindex="0"  role="button" />
                                 </span>
                             }
-                                
-                          
                             {listOfWorms2}
                         </div>
                 }

@@ -6,8 +6,13 @@ class PasswordsController < ApplicationController
         if pword_params[:email].blank?
             return render json: {error: 'Email not present'}
         end
+        if request.headers['Captcha-Token']
+            token_verification_response = verify_captcha()
+        else
+            token_verification_response = "rcaptcha unauthorized"
+        end
         user = User.find_by(email: pword_params[:email].downcase)
-        if user
+        if user && token_verification_response["success"]
             user.reset_password_token = SecureRandom.hex(10).strip
             user.reset_password_sent_at = Time.now.utc
             if user.save!
@@ -24,9 +29,14 @@ class PasswordsController < ApplicationController
         if pword_params[:token].blank?
             return render json: {error: 'token not present'}
         end
+        if request.headers['Captcha-Token']
+            token_verification_response = verify_captcha()
+        else
+            token_verification_response = "rcaptcha unauthorized"
+        end
         user = User.find_by(reset_password_token: token)
         valid = ((user.reset_password_sent_at + 4.hours) > Time.now.utc)
-        if user.present? && valid
+        if user.present? && valid && token_verification_response["success"]
             user.reset_password_token = nil
             user.password = pword_params[:new_password]
             if user.save!
@@ -45,7 +55,12 @@ class PasswordsController < ApplicationController
             token = header.split(' ').last
             authorized_token = authorize_token(token, user_id.to_s)
             new_token = build_token(user_id)
-            if user.authenticate(pword_params[:old_password]) && authorized_token[:message] == 'authorized'
+            if request.headers['Captcha-Token']
+                token_verification_response = verify_captcha()
+            else
+                token_verification_response = "rcaptcha unauthorized"
+            end
+            if user.authenticate(pword_params[:old_password]) && authorized_token[:message] == 'authorized' && token_verification_response["success"]
                 user.password = pword_params[:new_password]
                 user.save!
                 render json: {message: 'good', status: 200, new_token: new_token}

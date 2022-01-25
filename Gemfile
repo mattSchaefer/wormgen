@@ -25,6 +25,7 @@ gem 'jwt'
 gem "factory_bot_rails"
 gem 'awesome_print'
 gem "figaro"
+gem "httparty"
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 

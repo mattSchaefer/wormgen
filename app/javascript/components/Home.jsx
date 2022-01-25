@@ -120,12 +120,13 @@ const activeIcon = {
     borderBottom: '1px solid',
     color: "white !important",
     textDecoration: "none !important",
-    backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
+    //backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
     padding: "5px",
     textAlign: "center",
     transition: "0.3s ease-in",
     backgroundSize: "200% auto",
-    borderRadius: "20px",
+    background: 'rgb(250, 226, 92)',
+    borderRadius: "3px",
 }
 const spanPad = {
     paddingLeft: '5px',
@@ -321,7 +322,7 @@ export default function Home(props){
                                 <Element name="aNote" id="aNote"></Element>
                                 <h2 id="aNote" className="revealable" >A Note from The Admin:</h2>
                                 <h4 className="revealable"  style={Object.assign({}, leftRem)}>I do Consider Myself the <span style={note}>Johannes Gütenberg of Worm Generation</span>, the <span style={note}>Steve Jobs of Generated Worm Farming</span></h4>
-                                <p className="revealable" style={Object.assign({}, leftTwoRem)}>The every-day average person deserves to harness the power of p5.js to generate aesthetically pleasing worms.  It is an essential truth, a given right.  That is why I followed like one or two p5.js guides and then created a variation of a simple program that is found in many 'how to p5' blog posts and put it on a Ruby on Rails application with a ReactJS front-end that utilizes Redux state management and Material-UI.  In fact I spent very little time on the p5 program itself.  The whole point of this is, for one, that I myself learn more about full stack development, and for two, to start a trend in which the developers of generative art make a fair effort to give others the ability to use and save the outputs of the programs they created, not only at a level for fellow-developers, but at a level for end-users alike.  It is time for this power of this art form to be in the hands of many.  </p>
+                                <p className="revealable" style={Object.assign({}, leftTwoRem)}>The every-day average person deserves to harness the power of p5.js to generate aesthetically pleasing worms.  It is an essential truth, a given right.  That is why I followed like one or two p5.js guides and then created a variation of a simple program that is found in many 'how to p5' blog posts and put it on a Ruby on Rails application with a ReactJS front-end that utilizes Redux state management and Material-UI.  In fact I spent hardly any time on the p5 program itself.  The whole point of this is, for one, that I myself learn more about full stack development, and for two, to start a trend in which the developers of generative art make a fair effort to give others the ability to use and save the outputs of the programs they created, not only at a level for fellow-developers, but at a level for end-users alike.  It is time for this power of this art form to be in the hands of many.  If you are a creator of generative art I urge you to share your brush.</p>
                                 <p className="revealable"  style={Object.assign({}, leftTwoRem)}>Do with this what you will, but remember: with great power comes great responsibility. </p>
                                 <Link spy={true} smooth={true}  duration={500} activeClass="active"></Link>
                             </div>
@@ -347,10 +348,10 @@ export default function Home(props){
                                 <Element id="wormGallHead" name="wormGallHead" ></Element>
                                
                                 <h2 className="revealable" style={wormGallaryHeader} id="wormGallHead">
-                                    The Farm
+                                    The Collection
                                     {
                                     !user_logged_in &&
-                                        <p>Sign Up or Log On to have a look at the current state of The Farm</p>
+                                        <p>Sign Up or Log On to have a look at the current state of The Collection</p>
                                     }
                                     <span style={viewIconsContainer}>
                                         <div id="wormListLoader" className="loader">
@@ -359,16 +360,16 @@ export default function Home(props){
                                             <div className="circle load3 whiteBG" />
                                         </div>  
                                         <span style={spanPad} className="revealable" >
-                                            <ViewCarouselIcon className="btn-grad2" onClick={ (e) => dispatch(changeView('carousel', dispatch))} style={view1 != 'list' ? activeIcon : {}} />
-                                            <ListIcon className="btn-grad2" onClick={ (e) => dispatch(changeView('list', dispatch)) } style={view1 == 'list' ? activeIcon : {} }  />
+                                            <button className="btn-grad2 nav-button flx-btn" onClick={ (e) => dispatch(changeView('carousel', dispatch))} style={view1 != 'list' ? activeIcon : {}} tabindex="0"  role="button"><ViewCarouselIcon /></button>
+                                            <button className="btn-grad2 nav-button flx-btn" onClick={ (e) => dispatch(changeView('list', dispatch)) } style={view1 == 'list' ? activeIcon : {} }  tabindex="0" role="button" ><ListIcon /></button>
                                         </span>
                                         <hr />
                                         <span style={spanPad} >
-                                            <FavoriteBorder className="btn-grad2" onClick={(e) => dispatch(filterByFavorite(document.getElementById("userID").value))} style={list_fil == "favorite" ? activeIcon : {}} />
-                                            <PersonOutlineSharpIcon className="btn-grad2" onClick={(e) => dispatch(filterByCurrentUser(document.getElementById("userID").value))} style={list_fil == "current_user" ? activeIcon : {}} />
+                                            <button className="btn-grad2 nav-button flx-btn" onClick={(e) => dispatch(filterByFavorite(document.getElementById("userID").value))} style={list_fil == "favorite" ? activeIcon : {}} tabindex="0" role="button"><FavoriteBorder /></button>
+                                            <button className="btn-grad2 nav-button flx-btn" onClick={(e) => dispatch(filterByCurrentUser(document.getElementById("userID").value))} style={list_fil == "current_user" ? activeIcon : {}} tabindex="0"  role="button"><PersonOutlineSharpIcon /></button>
                                             {
                                                 list_fil !== "none" &&
-                                                <RotateLeftIcon className="btn-grad2" onClick={(e) => dispatch(resetFilter())} />
+                                                <button className="btn-grad2 nav-button flx-btn" onClick={(e) => dispatch(resetFilter())} tabindex="0" role="button"><RotateLeftIcon /></button>
                                             }
                                         </span>
                                     </span>

@@ -132,13 +132,19 @@ export async function login(dispatch){
     const username = document.getElementById('username').value
     const password = document.getElementById('password').value
     const csrf =  document.querySelector('meta[name="csrf-token"]').content
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaLoginToken').value.toString()
     const options = {
         method: 'POST',
         body: JSON.stringify({
             username: username,
             password: password
         }),
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json','X-CSRF-Token': csrf}
+        headers: {
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json',
+            'X-CSRF-Token': csrf,
+            'Captcha-Token': rcaptcha_token
+        }
     }
     dispatch(requestStarted)
     fetch(url, options)
@@ -158,6 +164,7 @@ export async function signup(dispatch){
     const password = document.getElementById('password').value
     const email = document.getElementById('email').value
     const csrf =  document.querySelector('meta[name="csrf-token"]').content
+    const rcaptcha_token = document.getElementById('uniqueRecaptchaSignupToken').value.toString()
     const body = JSON.stringify({
         username: username,
         email: email,
@@ -166,12 +173,18 @@ export async function signup(dispatch){
     const options = {
         method: 'POST',
         body: body,
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json','X-CSRF-Token': csrf}
+        headers: {
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json',
+            'X-CSRF-Token': csrf,
+            'Captcha-Token': rcaptcha_token
+        }
     }
     dispatch(requestStarted)
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
+            console.log(json)
             document.getElementById('loginSignupLoader').style.visibility = 'hidden';
 
             dispatch(signedUpUser(json))

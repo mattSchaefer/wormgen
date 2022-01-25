@@ -14,7 +14,7 @@ import ReCaptchaV2 from 'react-google-recaptcha';
 import {verifyForgotPasswordRecaptcha, verifyResetPasswordRecaptcha } from '../features/reCaptcha/reCaptchaSlice';
 import {reCaptchaState} from '../features/reCaptcha/reCaptchaSlice';
 const footerDiv={
-    minHeight: '40vh',
+    minHeight: '60vh',
     background: 'black',
     color: "#eee",
     display: 'flex',
@@ -36,11 +36,15 @@ const center = {
 const socialsIcons = {
     padding: '7px',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
+    alignItems: 'flex-end',
 }
 const socialsIconsOuterDiv = {
     width: '10rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
 }
 const marginBottomNone = {
     marginBottom: '0',
@@ -71,6 +75,9 @@ const captchaErrorMessage = {
     display: 'none',
     width: '82%',
 }
+const marRigh = {
+    marginRight: '.5rem',
+}
 export default function Footer(props){
     const dispatch = useDispatch()
     const user = useSelector(current_user)
@@ -90,7 +97,6 @@ export default function Footer(props){
             }else
                 document.getElementById('forgotPasswordRecaptchaErrorMessage').classList.add('recaptcha-error-active')
         }
-       
     }
     function resetPasswordSubmit(){
         document.getElementById('resetPasswordLoader').style.visibility = 'visible';
@@ -99,7 +105,6 @@ export default function Footer(props){
                 dispatch(resetPasswordToken)
             else
             document.getElementById('resetPasswordRecaptchaErrorMessage').classList.add('recaptcha-error-active')
-
         }
     }
     function handleForgotPasswordCaptchaChange(token){
@@ -198,12 +203,12 @@ export default function Footer(props){
                 <div>
                     <div style={socialsIconsOuterDiv}>
                         <span style={socialsIcons}>
-                            <InstagramIcon className="actually-link revealable" />
-                            <LinkedInIcon className="actually-link revealable" />
-                            <TwitterIcon className="actually-link revealable" />
+                            <button className="actually-link revealable btn-grad2 nav-button"><InstagramIcon /></button>
+                            <button className="actually-link revealable btn-grad2 nav-button"><LinkedInIcon /></button>
+                            <button className="actually-link revealable btn-grad2 nav-button"><TwitterIcon /></button>
                         </span>
-                        <span>
-                            <FreeBreakfastIcon className="actually-link revealable" />
+                        <span style={marRigh}>
+                        <button className="actually-link revealable btn-grad2 nav-button"><FreeBreakfastIcon /></button>
                         </span>
                     </div>
                 </div>

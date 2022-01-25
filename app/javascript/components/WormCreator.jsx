@@ -157,6 +157,7 @@ export default class WormCreator extends React.Component{
         const token = document.getElementById('token').value
         const user_id = document.getElementById('userID').value
         const csrf = document.querySelector('meta[name="csrf-token"]').content
+        const rcaptcha_token = document.getElementById('uniqueRecaptchaSaveWormToken').value
         const bearer = "Bearer " + token
         //const user_id = current_user || 1;
         this.props.dispatch(setSaveWormRequestPending)
@@ -167,7 +168,13 @@ export default class WormCreator extends React.Component{
                 user_id: this.props.currentUserId,
                 data_url: img_data
             }),
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': bearer, 'X-CSRF-Token': csrf}
+            headers: {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'Authorization': bearer, 
+                'X-CSRF-Token': csrf,
+                'Captcha-Token': rcaptcha_token
+            }
         }
         fetch(url, options)
             .then((response) => response.json())

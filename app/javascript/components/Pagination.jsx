@@ -14,17 +14,19 @@ const carouselPaginateSpan = {
 }
 const activePage = {
     height: "fit-content", 
-    color: "white !important",
+    color: "black !important",
     textDecoration: "none !important",
-    backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
+    //backgroundImage: "linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)",
     padding: "5px",
     textAlign: "center",
     transition: "0.3s ease-in",
     backgroundSize: "200% auto",
-    borderRadius: "20px",
+    background: 'rgb(250, 226, 92)',
+    borderRadius: "3px",
 }
 const pageButton = {
     transition: '.3s ease-out',
+    color: 'white',
 }
 const listPaginateSpan = {
     display: 'flex',
@@ -46,7 +48,7 @@ export default function(props){
     }
     if(pagination_button_indexes.length > 0 && wormListView == 'list'){
         pagination_buttons = pagination_button_indexes.map((index)=>
-            <Button className="btn-grad2 revealable" key={index} onClick={() => changeThePageAndScroll(index)} style={index == currentWormPage? activePage : pageButton}>{index}</Button>
+            <Button className="btn-grad2 revealable list-btn" key={index} onClick={() => changeThePageAndScroll(index)} style={index == currentWormPage ? activePage : pageButton} tabindex="0" role="button" onFocus={() => revealPageButtons()} >{index}</Button>
         )
     }else{
         pagination_buttons = [
@@ -65,6 +67,13 @@ export default function(props){
        dispatch(changePage(index))
        if(wormListView == 'list')
             setTimeout(() => scroller.scrollTo("wormGallHead", options), 100)
+    }
+    function revealPageButtons(){
+        var btns = document.getElementsByClassName('list-btn')
+        for(var i = 0; i < btns.length; i++){
+            btns[i].classList.add('activate-revealable')
+        }
+        
     }
     return(
         <span>

@@ -74,13 +74,14 @@ const strongStyle={
     textDecoration: 'underline',
     textDecorationThickness: 'bold',
     fontWeight: 'bold',
-    backgroundImage: 'linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)',
+    //backgroundImage: 'linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)',
+    borderBottom: '3px solid rgb(250, 226, 92)',
     padding: '5px',
     textAlign: 'center',
     transition: '0.5s',
     backgroundSize: '200% auto',
     color: 'white',
-    borderRadius: '20px',
+    borderRadius: '3px',
     backgroundPosition: 'right center',
     textDecoration: 'none',
     
@@ -311,14 +312,14 @@ export default function Login(props){
         scroller.scrollTo("footer", options)
     }
     function activateAccountSubmit(){
-        if(captcha_state.misc.activateAccountRecaptchaVerified == 'yes'){
+        //if(captcha_state.misc.activateAccountRecaptchaVerified == 'yes'){
             dispatch(activateAccount)
             setTimeout(function(){
                 dispatch(fetchWorms)
             },3000)
-        }else{
-            document.getElementById('accountActivationCaptchaErrorMessage').classList.add('recaptcha-error-active')
-        }
+       // }else{
+            //document.getElementById('accountActivationCaptchaErrorMessage').classList.add('recaptcha-error-active')
+        //}
     }
     function handleLoginSignupCaptchaChange(token, which){
         if(which == 'signup'){
@@ -372,17 +373,17 @@ export default function Login(props){
                 {
                     (!state.requestFinished || state.requestResponse.status !== 200) &&
                     <div style={logInSignUp}>
-                        <div className="btn-grad2" onClick={(e) => logInSignUpClick1(e, 'login')} onMouseEnter={(e) => logInSignUpHover(e, 'login')} onMouseLeave={(e) => noMoreHover()}>
+                        <button className="btn-grad2 nav-button" onClick={(e) => logInSignUpClick1(e, 'login')} onMouseEnter={(e) => logInSignUpHover(e, 'login')} onMouseLeave={(e) => noMoreHover()} tabindex="0" role="button">
                             <span style={state.displayedSection == 'login' ? strongStyle : state.activeHover == 'login' ? hoverButtonStyle : {}} onClick={(e) => logInSignUpClick1(e, 'login')}> 
                                 Log On
                             </span>
-                        </div>
+                        </button>
                         <span>/</span>
-                        <div className="btn-grad2" onClick={(e) => logInSignUpClick1(e, 'signup')} onMouseEnter={(e) => logInSignUpHover(e, 'signup')} onMouseLeave={(e) => noMoreHover()}>
+                        <button className="btn-grad2 nav-button" onClick={(e) => logInSignUpClick1(e, 'signup')} onMouseEnter={(e) => logInSignUpHover(e, 'signup')} onMouseLeave={(e) => noMoreHover()} tabindex="0" role="button">
                             <span style={state.displayedSection == 'signup' ? strongStyle : {}} >
                                 Sign Up
                             </span>
-                        </div>
+                        </button>
                     </div>
                 }
                 {
@@ -394,22 +395,22 @@ export default function Login(props){
                 {
                     state.requestFinished && state.requestResponse.status == 200  &&
                     <span style={loggedInHeaderContainer} className="mobile-flex-col-full-width">
-                        <div className="account-info-link btn-grad2" onClick={() => headLinkClick("footer")}>
+                        <button className="account-info-link btn-grad2 nav-button" onClick={(e) => headLinkClick("footer")} tabindex="0" role="button">
                             <PersonOutlineSharpIcon />
                             {state.requestResponse.user.username}
                             <TextField id="token" disabled value={state.current_user_token} onChange={() => dispatch(fetchWorms)} style={dontDisplay} />
                             <TextField id="userID" disabled value={state.current_user_id} style={dontDisplay} />
+                        </button>
+                        <div style={flex} className="mobile-flex-col-full-width nav-links" id="nav">
+                            <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('generate_worms')}  tabindex="0" role="button">Generate Worms</button>
+                            <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('favorite_worms')} tabindex="0" role="button">The Collection</button>
+                            <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('why_were_here')} tabindex="0" role="button">What We Want</button>
+                            <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('note')} tabindex="0" role="button">A Note</button>
                         </div>
-                        <div style={flex} className="mobile-flex-col-full-width nav-links hidden" id="nav">
-                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('generate_worms')} >Generate Worms</Link>
-                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('favorite_worms')}>The Farm</Link>
-                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('why_were_here')}>What We Want</Link>
-                            <Link className="btn-grad2" style={headLink} onClick={() => headLinkClick('note')}>A Note</Link>
-                        </div>
-                        <div className="btn-grad2 logout-button" style={cursor} onClick={(e) => logoutClick()}>
+                        <button className="btn-grad2 logout-button nav-button" style={cursor} onClick={(e) => logoutClick()} tabindex="0" role="button">
                             <span>Logout</span>
                             <MeetingRoomIcon />
-                        </div>
+                        </button>
                         <div className="mobileMenuToggle" onClick={ (e) => toggleMobileMenuDisplay()}>
                                 <span id="mobileMenuSharpSpan" className="visible">
                                     <MenuSharpIcon />
@@ -421,9 +422,9 @@ export default function Login(props){
                     </span>
                 }
                 <div>
-                    <div className="scrollToTopHeaderDiv btn-grad2" onClick={() => scroll.scrollToTop()}>
+                    <button className="scrollToTopHeaderDiv btn-grad2 nav-button" onClick={() => scroll.scrollToTop()}>
                             <ArrowUpward />
-                    </div>
+                    </button>
                     {/* <Button onClick={(e) => toggleCollapsed1(e)}>
                         {
                             !state.sectionCollapsed && 

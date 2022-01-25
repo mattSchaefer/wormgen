@@ -12,11 +12,11 @@ class Api::V1::UsersController < Api::V1::AuthController
         render json: @users
     end
     def show
-        @user = User.find_by(:username, user_params[:user][:username])
-        if @user.authenticate(user_params[:user][:password]) 
-            token = Token.build_token(@user.id)
-            render json: {user: @user, token: token, status: 200}, status: :ok
-        end
+         @user #= User.find_by(:username, user_params[:user][:username])
+        # if @user.authenticate(user_params[:user][:password]) 
+        #     token = Token.build_token(@user.id)
+        #     render json: {user: @user, token: token, status: 200}, status: :ok
+        # end
     end
     def update
         if user_params[:user][:email] && current_user.update_confirmed_email!
@@ -34,27 +34,37 @@ class Api::V1::UsersController < Api::V1::AuthController
             token = header.split(' ').last
             authorized_token = authorize_token(token, user_id.to_s)
             new_token = build_token(user_id)
-            if @user && authorized_token[:message] == 'authorized'
+            # if request.headers['Captcha-Token']
+            #     token_verification_response = verify_captcha()
+            # else
+            #     token_verification_response = "rcaptcha unauthorized"
+            # end
+            if @user
                 activation_valid = (@user.activation_token == user_params[:token]) && ((@user.activation_sent_at + 4.hours) > Time.now.utc)
                 if activation_valid
                     @user.activated = true
                     if @user.save!
                         render json: {message: 'account successfully activated', status: 200, new_token: new_token}, status: :ok
                     else
-                        render json: {errors: 'error', status: 401}, status: :bad_request
+                        render json: {errors: 'error1', status: 401}, status: :bad_request
                     end
                 else
-                    render json: {errors: 'error', status: 401}, status: :bad_request
+                    render json: {errors: 'error2', status: 401}, status: :bad_request
                 end
             else
-                render json: {errors: 'error', status: 401}, status: :bad_request
+                render json: {errors: 'error3', status: 401}, status: :bad_request
             end
         else
-            render json: {errors: 'error', status: 401}, status: :bad_request
+            render json: {errors: 'error4', status: 401}, status: :bad_request
         end
     end
     def set_unconfirmed_email
-        if user_params[:email]
+        if request.headers['Captcha-Token']
+            token_verification_response = verify_captcha()
+        else
+            token_verification_response = "rcaptcha unauthorized"
+        end
+        if user_params[:email] && token_verification_response["success"]
             user_id = User.find_by(email: user_params[:email]).id
             header = request.headers['Authorization'] || ''
             token = header.split(' ').last
@@ -98,7 +108,12 @@ class Api::V1::UsersController < Api::V1::AuthController
         authorized_token = authorize_token(token, user_id.to_s)
         new_token = build_token(user_id)
         user_email_confirmation_token_valid = (user.reset_email_token == params[:token]) && ((user.reset_email_sent_at + 4.hours) > Time.now.utc)
-        if !user || !user_email_confirmation_token_valid || authorized_token[:message] != 'authorized'
+        if request.headers['Captcha-Token']
+            token_verification_response = verify_captcha()
+        else
+            token_verification_response = "rcaptcha unauthorized"
+        end
+        if !user || !user_email_confirmation_token_valid || authorized_token[:message] != 'authorized' || !token_verification_response["success"]
             render json: {error: 'there is an issue with that suspicious link...', status: 401}
         else
             user.email = user.unconfirmed_emil
@@ -115,7 +130,12 @@ class Api::V1::UsersController < Api::V1::AuthController
         @user = User.new(user_params)
         @user.activation_token = SecureRandom.hex(10)
         @user.activation_sent_at = Time.now.utc
-        if @user.save!
+         if request.headers['Captcha-Token']
+             token_verification_response = verify_captcha()
+         else
+             token_verification_response = "rcaptcha unauthorized"
+         end
+        if token_verification_response["success"] && @user.save!
             UserMailer.with(username: @user.username, activation_token: @user.activation_token, email: @user.email).activate_account_email.deliver_later
             #send user activation token to be used in account activation form
             token = build_token(@user.id)

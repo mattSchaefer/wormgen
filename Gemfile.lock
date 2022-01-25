@@ -134,6 +134,9 @@ GEM
       thor (>= 0.14.0, < 2)
     globalid (0.5.2)
       activesupport (>= 5.0)
+    httparty (0.20.0)
+      mime-types (~> 3.0)
+      multi_xml (>= 0.5.2)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     jbuilder (2.11.2)
@@ -153,6 +156,7 @@ GEM
     minitest (5.14.4)
     msgpack (1.4.2)
     multi_test (0.1.2)
+    multi_xml (0.6.0)
     nio4r (2.5.8)
     nokogiri (1.12.4-arm64-darwin)
       racc (~> 1.4)
@@ -284,6 +288,7 @@ DEPENDENCIES
   database_cleaner
   factory_bot_rails
   figaro
+  httparty
   jbuilder (~> 2.7)
   jwt
   puma (~> 4.1)

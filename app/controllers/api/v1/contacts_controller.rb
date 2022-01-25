@@ -21,8 +21,13 @@ class Api::V1::ContactsController < ApplicationController
 
     end
     def create
+        if request.headers['Captcha-Token']
+            token_verification_response = verify_captcha()
+        else
+            token_verification_response = "rcaptcha unauthorized"
+        end
         @contact = Contact.new(contact_params)
-        if @contact.save!
+        if token_verification_response["success"] && @contact.save!
             render json: {
                 contact: @contact,
                 status: 200,

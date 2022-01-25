@@ -26,6 +26,7 @@ export async function submitContact(dispatch){
     var email = document.getElementById('contactFormEmail').value
     var subject = document.getElementById('contactFormSubject').value
     const csrf =  document.querySelector('meta[name="csrf-token"]').content
+    const rcaptcha_token = document.getElementById("uniqueRecaptchaSubmitContactToken").value
     var body = JSON.stringify({
         message: message,
         email: email,
@@ -34,7 +35,8 @@ export async function submitContact(dispatch){
     var headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrf
+        'X-CSRF-Token': csrf,
+        'Captcha-Token': rcaptcha_token
     }
     const options = {
         method: 'POST',

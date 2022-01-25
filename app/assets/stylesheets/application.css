@@ -212,6 +212,12 @@ section > div > h2 {margin-bottom: 1.5em;}
     justify-content: center;
     align-items: center;
 }
+.nav-button{
+    background: transparent;
+    border: none;
+    font-weight: 600;
+}
+
 .wormCarousel_1{
     margin-left: -10rem !important;
     margin-right: -10rem !important;
@@ -266,6 +272,7 @@ section > div > h2 {margin-bottom: 1.5em;}
     margin-left: -1rem;
     z-index: 800000;
     box-shadow: 5px 28px 21px -13px rgba(0,0,0,0.77);
+    border-bottom: 4px solid rgb(250, 226, 92);
 }
 
 .btn-grad {background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)}
@@ -289,22 +296,32 @@ section > div > h2 {margin-bottom: 1.5em;}
    /*background-image: linear-gradient(to right, #FF512F 0%, #F09819  51%, #FF512F  100%);*/
    background-image: linear-gradient(to right, #005C97 0%, #363795  51%, #005C97  100%)
  }
+.flx-btn{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: black;
+}
 
-
-.btn-grad2, .btn-grad2-active{height: fit-content; color: white !important; text-decoration: none !important; transition: .3s ease-out; background-image: none; background-size: ''; border-radius: 10px;}
-  .btn-grad2:hover, .btn-grad2-active {background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%) !important;}
-  .btn-grad2:hover, .btn-grad2-active {
+.btn-grad2{height: fit-content; color: white; text-decoration: none !important; transition: .3s ease-out; background-image: none; background-size: ''; border-radius: 10px;}
+  .btn-grad2:hover, .btn-grad2:focus, .btn-grad2-active {/*background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%) !important;*/
+    background: rgb(250, 226, 92) !important;
+    border-radius: 3px !important;
+    color: black !important;
+    opacity: 1;
+}
+  .btn-grad2:hover, .btn-grad2:focus, .btn-grad2-active {
     padding: 5px;
     text-align: center;
     transition: 0.2s ease-in;
-    background-size: 200% auto;
     color: black !important;
     border-radius: 20px;
    }
    
    .btn-grad2:hover, .btn-grad2-active {
      background-position: right center; /* change the direction of the change here */
-     color: #fff;
+     
      text-decoration: none !important;
    }
 .new-email-confirm{
@@ -366,7 +383,8 @@ section > div > h2 {margin-bottom: 1.5em;}
     visibility: hidden;}
 #mobileCloseSharpSpan{display: none;
     visibility: hidden;}
- 
+    .visible{visibility: visible !important;}
+    .hidden{visibility: hidden !important; display: none !important;}
 @media only screen and (max-width: 800px) {
     canvas {
       width: 90vw !important;
@@ -404,7 +422,8 @@ section > div > h2 {margin-bottom: 1.5em;}
     .mobile-flex-col-full-width{
         flex-direction: column !important;
         width: 100vw !important;
-        background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;
+        /*background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;*/
+        background: black;
 
     }
     .nav-links{
@@ -417,14 +436,16 @@ section > div > h2 {margin-bottom: 1.5em;}
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;
+        /*background: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;*/
+        background: black;
     }
     .logout-button{
         width: 100vw !important;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;
+        /*background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  20%, #00d2ff  100%) !important;*/
+        background: black;
         border-radius: 0 !important;
     }
     .visible{visibility: visible !important;}
@@ -435,7 +456,9 @@ section > div > h2 {margin-bottom: 1.5em;}
         align-items: center;
         justify-content: center;
         height: 3rem;
-        background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5 20%, #00d2ff 100%);
+        /*background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5 20%, #00d2ff 100%);*/
+        background: black;
+        border-bottom: 2px solid #ffd000;
     }
     .wormListItem:hover{
         cursor: pointer;
