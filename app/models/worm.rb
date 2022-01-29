@@ -26,9 +26,12 @@ class Worm < ApplicationRecord
         @worm.favorited_by = @worm.favorited_by || ''
         new_fav_by = ''
         if @worm.favorited_by.length > 0
-            fav_by_arr = @worm.favorited_by.split(',')
+            fav_by_arr = @worm.favorited_by.to_s.split(',')
             new_fav_by = fav_by_arr.select{|i| i.to_s != user_id.to_s}
             @worm.favorited_by = new_fav_by.join(',')
+            if new_fav_by.length == 1
+                @worm.favorited_by += ','
+            end
             if @worm.save!
                 return true
             else

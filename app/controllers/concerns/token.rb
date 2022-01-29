@@ -12,14 +12,16 @@ module Token
     end
     def decode_token(token)
         JWT.decode(token, self.secret)
+        rescue => error
+            {status: 401, body: 'very bad', error: error}
     end
     def validate_token(token)
         decoded = decode_token(token)
         expired = DateTime.now.to_i > decoded[0]['exp']
         return_data = {expired: expired, decoded: decoded}
         return_data
-        rescue
-            'unable to validate token'
+        rescue => error
+             {status: 401, body: 'very bad', error: error}
     end
     def authorize_token(token, user_id)
         decoded = decode_token(token)

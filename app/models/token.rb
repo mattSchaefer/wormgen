@@ -9,9 +9,13 @@ class Token
     end
     def encode_token(payload,secret)
         JWT.encode payload, secret, 'HS256'
+        rescue => error
+            render json: {status: 500, body: 'very bad', error: error}
     end
     def decode_token(token)
         JWT.decode(token, self.secret)
+        rescue => error
+            render json: {status: 500, body: 'very bad', error: error}
     end
     def validate_token(token)
         decoded = decode_token(token)

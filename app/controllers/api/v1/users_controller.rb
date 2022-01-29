@@ -139,7 +139,19 @@ class Api::V1::UsersController < Api::V1::AuthController
             UserMailer.with(username: @user.username, activation_token: @user.activation_token, email: @user.email).activate_account_email.deliver_later
             #send user activation token to be used in account activation form
             token = build_token(@user.id)
-            render json: {user: @user, token: token, status: 200}
+            user_copy = {activated: false, activation_sent_at: '', activation_token: '', reset_email_sent_at: '', reset_email_token: '', unconfirmed_emil: '', reset_password_sent_at: '', reset_password_token: '', id: '', username: '', email: ''}
+            user_copy["activated"] = @user.activated || false
+            user_copy["activation_sent_at"] = @user.activation_sent_at || " "
+            user_copy["activation_token"] = @user.activation_token || " "
+            user_copy["reset_email_sent_at"] = @user.reset_email_sent_at || " "
+            user_copy["reset_email_token"] = @user.reset_email_token || " "
+            user_copy["unconfirmed_emil"] = @user.unconfirmed_emil || " "
+            user_copy["reset_password_sent_at"] = @user.reset_password_sent_at || " "
+            user_copy["reset_password_token"] = @user.reset_password_token || " "
+            user_copy["id"] = @user.id
+            user_copy["username"] = @user.username
+            user_copy["email"] = @user.email
+            render json: {user: user_copy, token: token, status: 200}
         else
             render json: {status: 401, body: "oops"}
         end

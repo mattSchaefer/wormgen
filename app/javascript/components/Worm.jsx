@@ -152,12 +152,12 @@ export default function Worm(props){
     if(fil_worms_arr && fil_worms_arr.length > 0)
         carousel_index = props.index//(fil_worms_arr.length - props.wormID) % 3;
     //props.totalLen % 2 == 0 ? carousel_index = props.wormID % 3 + 1 : carousel_index = props.wormID % 3;
-    var fav_by_user_arr=[]
+    var fav_by_user_arr=[]//props.favorited_by.split(',').find((i) => i.toString() == currentUser.toString())
     function toggleFavorite(){
         dispatch(setFavoriteWormRequestPending(props.wormID))
-        fav_by_user_arr = props.favorited_by ? props.favorited_by.split(',').find((i) => i == currentUser) : []
+        fav_by_user_arr = props.favorited_by ? props.favorited_by.split(',').find((i) => i.toString() == currentUser.toString()) : []
         document.getElementById('favWormToggleID').value = props.wormID
-        if(fav_by_user_arr.length > 0 || fav_by > 0){
+        if(props.favorited_by && props.favorited_by.split(',').indexOf(currentUser.toString()) >= 0){
             //fav_by--
             //document.getElementById('favBy').innerText = (fav_by).toString()
             dispatch(unfavoriteWorm).then(()=>{
@@ -270,14 +270,13 @@ export default function Worm(props){
                         {
                             (fav_worm_pending == 'no' || props.wormID !== pending_favorite_for )&&
                             <span>
-                                {/* {props.favorited_by && props.favorited_by.length > 0 ? props.favorited_by.split(',').length : "0"} */}
-                                <span id="favBy">{fav_by}</span>
+                                <span id="favBy">{props.favorited_by ? props.favorited_by.split(',').length - 1 : "0"}</span>
                                 {
-                                    fav_by_user_arr.length == 0 && fav_by == 0 &&
+                                 (!props.favorited_by || props.favorited_by == null || props.favorited_by.length == 0 || props.favorited_by.split(',').indexOf(currentUser.toString()) < 0) &&
                                     <button className="nav-button" onClick={() => toggleFavorite()} tabindex="0" role="button" ><FavoriteBorder style={redOutline}  /></button>
                                 }
                                 {
-                                    fav_by_user_arr.length > 0 || fav_by > 0 &&
+                                     props.favorited_by && props.favorited_by.split(',').indexOf(currentUser.toString()) >= 0 &&
                                     <button onClick={() => toggleFavorite()} tabindex="0" role="button" className="nav-button"><Favorite style={redFill}  /></button>
                                 }
                             </span>

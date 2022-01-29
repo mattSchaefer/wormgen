@@ -12,7 +12,20 @@ class Api::V1::AuthController < ApplicationController
         end
         if token_verification_response["success"] && user && user.authenticate(auth_params[:password])
             token = build_token(user.id)
-            render json: {message: 'SUCCESS', token: token, status: 200, user: user, activated: user.activated.to_s, token_verification_response: token_verification_response["success"]}
+            user_copy = {activated: false, activation_sent_at: '', activation_token: '', reset_email_sent_at: '', reset_email_token: '', unconfirmed_emil: '', reset_password_sent_at: '', reset_password_token: '', id: '', username: '', email: ''}
+            user_copy["activated"] = user.activated || false
+            user_copy["activation_sent_at"] = user.activation_sent_at || " "
+            user_copy["activation_token"] = user.activation_token || " "
+            user_copy["reset_email_sent_at"] = user.reset_email_sent_at || " "
+            user_copy["reset_email_token"] = user.reset_email_token || " "
+            user_copy["unconfirmed_emil"] = user.unconfirmed_emil || " "
+            user_copy["reset_password_sent_at"] = user.reset_password_sent_at || " "
+            user_copy["reset_password_token"] = user.reset_password_token || " "
+            user_copy["id"] = user.id
+            user_copy["username"] = user.username
+            user_copy["email"] = user.email
+
+            render json: {message: 'SUCCESS', token: token, status: 200, user: user_copy, activated: user.activated.to_s, token_verification_response: token_verification_response["success"]}
         else
             render json: {message: "1there was an issue logging in. please try again", status: 500}
         end
