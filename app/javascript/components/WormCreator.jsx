@@ -1,7 +1,7 @@
 import React from 'react';
 import WormList from './WormList';
 import P5 from 'p5';
-import { Button, Textfield } from '@material-ui/core';
+import { Button, Textfield, Checkbox } from '@material-ui/core';
 import ReactDOM from 'react-dom';
 import { fetchWorms, setSaveWormRequestPending } from '../features/wormList/wormListSlice';
 import { } from '../features/wormList/wormListSlice';
@@ -32,6 +32,16 @@ const saveWormButton = {
 const captchaErrorMessage = {
     display: 'none',
     width: '82%',
+}
+const white={
+    color: 'white',
+}
+const softWormOptionContainer = {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
 }
 export function DispatchSavedWorm(props){
     const dispatch = useDispatch();
@@ -103,7 +113,7 @@ export default class WormCreator extends React.Component{
                     }else{
                         sketch.background(saved_bg);
                     }
-                    for(var i = remember_path.length - 1; i >= remember_path.length - 550 && i >= 0; i--){
+                    for(var i = remember_path.length - 1; i >= remember_path.length - 750 && i >= 0; i--){
                         var random = Math.random() * 30 + 30;
                         var randomColor = getRandomInt(255) ;
                         var randomColorDec2 = Math.random();
@@ -112,6 +122,12 @@ export default class WormCreator extends React.Component{
                         var randomColorBG4 = getRandomInt(255);
                         var ranIntTo80 = getRandomInt(80)
                         var bg_string_2 = 'rgba('+randomColorBG4+','+randomColorBG5+','+randomColorBG6+ ',' + opa_track+')';
+                        if(document.getElementById('noStrokeQuestion').checked){
+                            sketch.noStroke();
+                            bg_string_2 = 'rgba('+randomColorBG4+','+randomColorBG5+','+randomColorBG6+ ',' + 1 +')';
+                        }else{
+                            sketch.stroke('black');   
+                        }
                         sketch.ellipse(remember_path[i]["mouseX"], remember_path[i]["mouseY"], opa_track*100, opa_track*100);
                         if(i % 20 == 0){
                             sketch.fill(bg_string_2);
@@ -201,6 +217,10 @@ export default class WormCreator extends React.Component{
         }
         return(
             <span>
+                <span style={softWormOptionContainer}>
+                    <span style={white}>soft worm:</span>
+                    <Checkbox id="noStrokeQuestion" label="Blend" color="primary" /> 
+                </span>
                 <div ref={this.myRef} style={homePageCanvas} className="revealable" id="mainCanvas" onClick={(e) => e.preventDefault()} ></div>
                 <div>
                     <NewWormAttrs user={this.props.currentUser} />

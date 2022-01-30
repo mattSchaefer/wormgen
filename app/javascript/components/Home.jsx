@@ -299,10 +299,10 @@ export default function Home(props){
                                 <UserProfile></UserProfile>
                             </section>
                         }
-                        <section id="aboutUsSection" className="revealable">
-                            <AboutUs slide={active_slide} verbiage={active_verbiage} />
+                        {/* <section id="aboutUsSection" className="revealable">
+                            
                             <Link spy={true} smooth={true} to="wormGallHead" duration={500} activeClass="active"></Link>
-                        </section>
+                        </section> */}
                         
                         <Element name="aboutUs"></Element>
                        

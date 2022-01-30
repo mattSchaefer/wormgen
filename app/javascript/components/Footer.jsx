@@ -121,6 +121,23 @@ export default function Footer(props){
             dispatch(verifyResetPasswordRecaptcha)
         },1000)
     }
+    function socialIconClick(which){
+        switch(which){
+            case "twit":
+                break;
+            case 'insta':
+                window.open('https://www.instagram.com/friendlywormfarm', '_blank');
+                break;
+            case 'linked':
+                window.open('https://www.linkedin.com/in/matt-schaefer-b42911150/','_blank');
+                break;
+            case 'coffee':
+                window.open('https://www.buymeacoffee.com/matthewschaefer', '_blank');
+                break;
+            default:
+                break;
+        }
+    }
     return (
         <div style={footerDiv} className="footer-container-1">
             <div style={flexBetween} className="footer-container-2">
@@ -203,12 +220,12 @@ export default function Footer(props){
                 <div>
                     <div style={socialsIconsOuterDiv}>
                         <span style={socialsIcons}>
-                            <button className="actually-link revealable btn-grad2 nav-button"><InstagramIcon /></button>
-                            <button className="actually-link revealable btn-grad2 nav-button"><LinkedInIcon /></button>
-                            <button className="actually-link revealable btn-grad2 nav-button"><TwitterIcon /></button>
+                            <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('insta')} ><InstagramIcon /></button>
+                            <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('linked')}><LinkedInIcon /></button>
+                            <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('twit')}><TwitterIcon /></button>
                         </span>
                         <span style={marRigh}>
-                        <button className="actually-link revealable btn-grad2 nav-button"><FreeBreakfastIcon /></button>
+                        <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('coffee')}><FreeBreakfastIcon /></button>
                         </span>
                     </div>
                 </div>

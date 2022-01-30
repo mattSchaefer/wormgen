@@ -99,22 +99,26 @@ class Api::V1::WormsController < ApplicationController
     end
     def create
         respond_to :html, :json, :xml
-        @worm = Worm.new(worm_params)
-        # if worm_params[:image]
-        #     @worm.image.attach(worm_params[:image])
-        # end
-        header = request.headers['Authorization'] || ''
-        token = header.split(' ').last
-        authorized_token = authorize_token(token, worm_params[:user_id].to_s)
-        new_token = build_token(worm_params[:user_id])
-        if request.headers['Captcha-Token']
-            token_verification_response = verify_captcha()
-        else
-            token_verification_response = "rcaptcha unauthorized"
-        end
-        if authorized_token[:message] == 'authorized' && token_verification_response["success"]
-            if @worm.save && @worm.add_to_user(worm_params[:user_id])
-                render json: {worm: @worm, new_token: new_token}
+        if worm_params[:data_url].to_s.index('data:image/png;base64,') == 0
+            @worm = Worm.new(worm_params)
+            # if worm_params[:image]
+            #     @worm.image.attach(worm_params[:image])
+            # end
+            header = request.headers['Authorization'] || ''
+            token = header.split(' ').last
+            authorized_token = authorize_token(token, worm_params[:user_id].to_s)
+            new_token = build_token(worm_params[:user_id])
+            if request.headers['Captcha-Token']
+                token_verification_response = verify_captcha()
+            else
+                token_verification_response = "rcaptcha unauthorized"
+            end
+            if authorized_token[:message] == 'authorized' && token_verification_response["success"]
+                if @worm.save && @worm.add_to_user(worm_params[:user_id])
+                    render json: {worm: @worm, new_token: new_token}
+                else
+                    render json: {message: 'worm creation/association FAIL (X)~(X)'}
+                end
             else
                 render json: {message: 'worm creation/association FAIL (X)~(X)'}
             end

@@ -240,7 +240,7 @@ export default function Worm(props){
                         <span style={flexRowBet}>
                                 {
                                     props.author == currentUser &&
-                                    <button className="nav-button" href={props.src} download={props.name} tabindex="0" role="button" >Export Worm</button>
+                                    <a className="nav-button" href={props.src} download={props.name} tabindex="0" role="button" >Export Worm</a>
                                 }
                                 <span>
                                 {
