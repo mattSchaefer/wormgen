@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, TextArea, Button } from '@material-ui/core';
+import { TextField, TextArea, Button, Checkbox } from '@material-ui/core';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
@@ -121,6 +121,15 @@ export default function Footer(props){
             dispatch(verifyResetPasswordRecaptcha)
         },1000)
     }
+    function resetPasswordShowPassToggle(){
+        if(document.getElementById('resetPasswordUiPassword').type == 'password'){
+            document.getElementById('resetPasswordUiPassword').type = 'text'
+            document.getElementById('resetPasswordUiPasswordConfirm').type = 'text'
+        }else{
+            document.getElementById('resetPasswordUiPassword').type = 'password'
+            document.getElementById('resetPasswordUiPasswordConfirm').type = 'password'
+        }
+    }
     function socialIconClick(which){
         switch(which){
             case "twit":
@@ -192,8 +201,9 @@ export default function Footer(props){
                                     <TextField id="resetPasswordUiPasswordToken" className="revealable" label="Code we sent you (no spaces):" style={totalWidth} />
                                     <br />
                                     <span style={totalWidth}>
-                                        <TextField id="resetPasswordUiPassword" className="revealable" label="Password:" style={totalWidth} />
-                                        <TextField id="resetPasswordUiPasswordConfirm" className="revealable" label="Password Confirmation:" style={totalWidth} />
+                                        <TextField id="resetPasswordUiPassword" className="revealable" label="Password:" style={totalWidth} type={'password'} />
+                                        <TextField id="resetPasswordUiPasswordConfirm" className="revealable" label="Password Confirmation:" style={totalWidth} type={'password'} />
+                                        <Checkbox id="resetPasswordShowPass" label="Reset Password Show password" color="primary" type="checkbox" onClick={(e) => resetPasswordShowPassToggle()} /> <span> show passwords </span>
                                     </span>
                                     <span id="resetPasswordRecaptchaErrorMessage" style={captchaErrorMessage}>
                                         please verify the captcha

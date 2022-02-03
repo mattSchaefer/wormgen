@@ -194,6 +194,27 @@ export default function UserProfile(props){
             dispatch(verifyConfirmEmailRecaptcha)
         },1000)
     }
+    function userProfileToggleShowPass(){
+        if(reset_email_view == 'yes'){
+            if(document.getElementById('userProfileUiPassword').type == 'password'){
+                document.getElementById('userProfileUiPassword').type = 'text'
+            }else{
+                document.getElementById('userProfileUiPassword').type = 'password'
+            }
+        }else if(reset_password_view == 'yes'){
+            if(document.getElementById('userProfileUiPassword').type == 'password'){
+                document.getElementById('userProfileUiPassword').type = 'text'
+                document.getElementById('userProfileUiOldPassword').type = 'text'
+                document.getElementById('userProfileUiOldPasswordConfirm').type = 'text'
+                document.getElementById('userProfileUiPasswordConfirm').type = 'text'
+            }else{
+                document.getElementById('userProfileUiPassword').type = 'password'
+                document.getElementById('userProfileUiOldPassword').type = 'password'
+                document.getElementById('userProfileUiOldPasswordConfirm').type = 'password'
+                document.getElementById('userProfileUiPasswordConfirm').type = 'password'
+            }
+        }
+    }
     return (
         <div>
             <span style={flexCol} className="user-profile-container">
@@ -223,19 +244,19 @@ export default function UserProfile(props){
                                 {
                                     reset_password_view == 'yes' &&
                                     <span style={flexCol}>
-                                        <TextField id="userProfileUiOldPassword" className="revealable" label="OldPassword" style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500}  type={document.getElementById('userProfilePass') && document.getElementById('userProfilePass').checked ? 'text' : 'password'} />
-                                        <TextField id="userProfileUiOldPasswordConfirm" className="revealable" label="Old Password Confirm" style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500} type={document.getElementById('userProfilePass') && document.getElementById('userProfilePass').checked ? 'text' : 'password'} />
+                                        <TextField id="userProfileUiOldPassword" className="revealable" label="OldPassword" style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500}  type={'password'} />
+                                        <TextField id="userProfileUiOldPasswordConfirm" className="revealable" label="Old Password Confirm" style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500} type={'password'} />
                                     </span>
                                 }
-                                <TextField id="userProfileUiPassword" className="revealable" label="Password" style={oneHundW} type={document.getElementById('userProfilePass') && document.getElementById('userProfilePass').checked ? 'text' : 'password'} />
+                                <TextField id="userProfileUiPassword" className="revealable" label="Password" style={oneHundW} type={'password'} />
                                 <span style={checkboxLabelContainer} className="revealable" >
-                                    <Checkbox id="userProfilePass" label="Show password" color="primary" /> 
+                                    <Checkbox id="userProfilePass" label="Show password" color="primary" onClick={() => userProfileToggleShowPass()}/> 
                                     <span>show password{reset_password_view == 'yes' && <span>s</span>}</span>
                                 </span>
                                 {
                                     reset_password_view == 'yes' &&
                                     <span style={flexCol}>
-                                        <TextField id="userProfileUiPasswordConfirm" className="revealable" label="Password Confirm"  style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500}  type={document.getElementById('userProfilePass') && document.getElementById('userProfilePass').checked ? 'text' : 'password'} />
+                                        <TextField id="userProfileUiPasswordConfirm" className="revealable" label="Password Confirm"  style={oneHundW} error={reset_status.status == 401 || reset_status.status == 500}  type={'password'} />
                                         <span id="changePasswordCaptchaErrorMessage" style={captchaErrorMessage}>
                                             please verify the captcha
                                         </span>

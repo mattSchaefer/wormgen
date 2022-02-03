@@ -336,6 +336,23 @@ export default function Login(props){
             },300)
         }
     }
+    function toggleLoginSignupShowPass(){
+        if(state.displayedSection == 'signup'){
+            if(document.getElementById('password').type == 'password'){
+                document.getElementById('password').type = 'text'
+                document.getElementById('password-confirm').type = 'text'
+            }else{
+                document.getElementById('password').type = 'password'
+                document.getElementById('password-confirm').type = 'password'
+            }
+        }else{
+            if(document.getElementById('password').type == 'password'){
+                document.getElementById('password').type = 'text'
+            }else{
+                document.getElementById('password').type = 'password'
+            }
+        }
+    }
     function handleActivateAccountCaptchaChange(token){
         document.getElementById('uniqueRecaptchaActivateAccountToken').value = token
         console.log(token)
@@ -458,16 +475,16 @@ export default function Login(props){
                                         <TextField id="email" label="Email"  className="revealable" style={fillContainer} error={state.signupError == 'yes'} />
                                     }
                                     <span style={fullWidth}>
-                                        <TextField id="password" label="Password"  className="revealable" error={state.signupError == 'yes' || state.loginError == 'yes'} type={document.getElementById('loginSignupShowPass') && document.getElementById('loginSignupShowPass').checked ? '' : 'password'} style={fillContainer} />
+                                        <TextField id="password" label="Password"  className="revealable" error={state.signupError == 'yes' || state.loginError == 'yes'} type={'password'} style={fillContainer} />
                                         <span style={checkboxLabelContainer} className="revealable">
-                                            <Checkbox id="loginSignupShowPass" label="Show password" color="primary" /> 
+                                            <Checkbox id="loginSignupShowPass" label="Show password" color="primary" onClick={(e) => toggleLoginSignupShowPass() } /> 
                                             <span>show password{ state.displayedSection == 'signup' && <span>s</span>}</span>
                                         </span>
                                     </span>
                                     {
                                         state.displayedSection == 'signup' &&
                                         <span style={fullWidth}>
-                                            <TextField id="password-confirm" className="revealable" label="Password Confirmation" type="password" error={state.signupError == 'yes'} style={fillContainer} type={document.getElementById('loginSignupShowPass') && document.getElementById('loginSignupShowPass').checked ? 'text' : 'password'} style={fillContainer} />
+                                            <TextField id="password-confirm" className="revealable" label="Password Confirmation" type="password" error={state.signupError == 'yes'} style={fillContainer} type={'password'} style={fillContainer} />
                                         </span>
                                     }
                                     <span id="loginSignupCaptchaErrorMessage" style={captchaErrorMessage}>
