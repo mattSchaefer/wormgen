@@ -109,14 +109,14 @@ export default function Footer(props){
     }
     function handleForgotPasswordCaptchaChange(token){
         document.getElementById('uniqueRecaptchaForgotPasswordToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyForgotPasswordRecaptcha)
         },1000)
     }
     function handleResetPasswordCaptchaChange(token){
         document.getElementById('uniqueRecaptchaResetPasswordToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyResetPasswordRecaptcha)
         },1000)
@@ -228,13 +228,13 @@ export default function Footer(props){
                     </div>
                 }
                 <div>
-                    <div style={socialsIconsOuterDiv}>
-                        <span style={socialsIcons}>
+                    <div style={socialsIconsOuterDiv} className="socialsIconsOuterDiv">
+                        <span style={socialsIcons} className="socialsIconsInnerDiv">
                             <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('insta')} ><InstagramIcon /></button>
                             <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('linked')}><LinkedInIcon /></button>
-                            <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('twit')}><TwitterIcon /></button>
+                            {/* <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('twit')}><TwitterIcon /></button> */}
                         </span>
-                        <span style={marRigh}>
+                        <span style={marRigh} className="socialsIconsInnerDiv">
                         <button className="actually-link revealable btn-grad2 nav-button" onClick={() => socialIconClick('coffee')}><FreeBreakfastIcon /></button>
                         </span>
                     </div>

@@ -150,7 +150,7 @@ export async function login(dispatch){
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
-            console.log(json)
+            //console.log(json)
             json.status == 200 ? dispatch(loggedInUser(json)) : dispatch(logInFailure(json))
         })
         .catch((e)=>{
@@ -184,38 +184,16 @@ export async function signup(dispatch){
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
-            console.log(json)
+            //console.log(json)
             document.getElementById('loginSignupLoader').style.visibility = 'hidden';
-
             dispatch(signedUpUser(json))
         }).catch((e)=>{
             dispatch(signUpFailure(e))
         })
 };
 export async function logout(dispatch){
-    // const url = "api/v1/users/" + document.getElementById('userID').value
-    // const csrf =  document.querySelector('meta[name="csrf-token"]').content
-    // const token = document.getElementById('token').value
-    // const bearer = "Bearer " + token
-    // const options = {method: 'GET',
-    //     headers: {
-    //     'Content-Type': 'application/json', 
-    //     'Accept': 'application/json', 
-    //     'Authorization': bearer,
-    //     'X-CSRF-Token': csrf
-    //     }
-    // }
-    // fetch(url, options)
-    //     .then((response) => response.json())
-    //     .then((json)=> {
-    //         console.log(json)
             const json = {message: 'user logged out lol', status: 200}
             dispatch(loggedOut(json))
-        // }).catch((e)=>{
-        //     console.log(e)
-        //     dispatch(loggedOutFail(e))
-        // })
-
 };
 export async function updateUser(dispatch){
     const url = "api/v1/users/" + document.getElementById('userID').value
@@ -244,10 +222,10 @@ export async function updateUser(dispatch){
     fetch(url, options)
         .then((response) => response.json())
         .then((json)=> {
-            console.log(json)
+            //console.log(json)
             dispatch(updatedUser(json))
         }).catch((e)=>{
-            console.log(e)
+            //console.log(e)
             dispatch(updateUserFailure(e))
         })
 };

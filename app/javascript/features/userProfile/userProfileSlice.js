@@ -73,12 +73,12 @@ export async function activateAccount(dispatch){
     fetch(activate_url, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
         dispatch(activateAccountDone(json))
     })
     .catch((e) => {
-        console.log(e)
+        //console.log(e)
         var string_e = JSON.stringify({e: e})
         dispatch(activateAccountDone(string_e))
     })
@@ -104,12 +104,12 @@ export async function forgotPassword(dispatch){
     fetch(forgot_url, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('forgotPasswordLoader').style.visibility = 'hidden';
         dispatch(forgotPasswordDone(json))
     })
     .catch((e) => {
-        console.log(e)
+        //console.log(e)
         dispatch(forgotPasswordDone(e))
     })
 };
@@ -144,13 +144,13 @@ export async function resetPasswordOldPass(dispatch){
     fetch(reset_url, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
         document.getElementById('changePasswordLoader').style.visibility = 'hidden';
         dispatch(resetPasswordOldPassDone(json))
     })
     .catch((e) => {
-        console.log(e)
+        //console.log(e)
         dispatch(resetPasswordOldPassDone(e))
     })
 };
@@ -179,12 +179,12 @@ export async function resetPasswordToken(dispatch){
     fetch(reset_url, options)
     .then((response)=>response.json())
     .then((json)=>{
-        console.log(json)
+        //console.log(json)
         document.getElementById('resetPasswordLoader').style.visibility = 'hidden';
         dispatch(resetPasswordTokenDone(json))
     })
     .catch((e)=>{
-        console.log(e)
+        //console.log(e)
         dispatch(resetPasswordTokenDone(e))
     })
 };
@@ -216,7 +216,7 @@ export async function resetEmail(dispatch){
     fetch(unconfirmed_email_url, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
         document.getElementById('changeEmailLoader').style.visibility = 'hidden';
         dispatch(resetEmailDone(json))
@@ -253,7 +253,7 @@ export async function confirmUnconfirmedEmailWithToken(dispatch){
     fetch(confirm_url, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
         document.getElementById('userProfileCurrEmailField').value = json.email
         document.getElementById('userProfileCurrEmailField').classList.add('new-email-confirm')

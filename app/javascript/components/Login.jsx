@@ -324,13 +324,13 @@ export default function Login(props){
     function handleLoginSignupCaptchaChange(token, which){
         if(which == 'signup'){
             document.getElementById('uniqueRecaptchaSignupToken').value = token
-            console.log(token)
+            //console.log(token)
             setTimeout(function(){
                 dispatch(verifySignupRecaptcha)
             },300)
         }else{
             document.getElementById('uniqueRecaptchaLoginToken').value = token
-            console.log(token)
+            //console.log(token)
             setTimeout(function(){
                 dispatch(verifyLoginRecaptcha)
             },300)
@@ -355,7 +355,7 @@ export default function Login(props){
     }
     function handleActivateAccountCaptchaChange(token){
         document.getElementById('uniqueRecaptchaActivateAccountToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyActivateAccountRecaptcha)
         },300)

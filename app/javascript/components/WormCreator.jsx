@@ -154,8 +154,8 @@ export default class WormCreator extends React.Component{
                 document.getElementById('wormCreateLoader').style.visibility = 'visible';
                 const img = canvas.get();
                 img.save(sketch.frameCount, '.png');
-                console.log("saved image from sketch 2");
-                console.log(img);
+                //console.log("saved image from sketch 2");
+                //console.log(img);
                 var img2_url = img.canvas.toDataURL();
                 this.pushWormToDB(img2_url);
                 return img;
@@ -195,13 +195,15 @@ export default class WormCreator extends React.Component{
         fetch(url, options)
             .then((response) => response.json())
             .then((json) => {
-                console.log(json)
+                //console.log(json)
                 document.getElementById('token').value = json.new_token.token
                 this.props.dispatch(fetchWorms)
                 document.getElementById('new-worm-name').value = ''
                 document.getElementById('wormCreateLoader').style.visibility = 'hidden';
             })
-            .catch((e) => console.log(e))
+            .catch((e) => {
+                //console.log(e)
+            })
     }
     componentDidMount() {
       this.myP5 = new P5(this.Sketch, this.myRef.current)
@@ -210,7 +212,7 @@ export default class WormCreator extends React.Component{
     render() {
         function handleCreateWormCaptchaChange(token, dispatch){
             document.getElementById('uniqueRecaptchaSaveWormToken').value = token
-            console.log(token)
+            //console.log(token)
             setTimeout(function(){
                 dispatch(verifyCreateWormRecaptcha).then(()=>document.getElementById('saveWormRecaptchaErrorMessage').classList.remove('recaptcha-error-active'))
             },1000)

@@ -36,7 +36,7 @@ export default function Contact(props){
     }
     function handleContactSubmitCaptchaChange(token){
         document.getElementById('uniqueRecaptchaSubmitContactToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyContactSubmitRecaptcha)
         },1000)

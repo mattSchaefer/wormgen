@@ -47,7 +47,7 @@ export async function submitContact(dispatch){
     fetch(url, options)
         .then(response => response.json())
         .then(json => {
-            console.log(json)
+            //console.log(json)
             dispatch(contactSubmitted(json))
         })
         .catch(e => {

@@ -131,7 +131,8 @@ export default function UserProfile(props){
                 if(filtered_arr[i].favorited_by)
                     list.push(filtered_arr[i].favorited_by.toString().split(',').filter((x)=>{return x.length > 0}).length)
                 
-            }console.log(list);
+            }
+            //console.log(list);
             var num_favs = list.reduce((previousValue, currentValue) => {
                 return previousValue + currentValue;
             })
@@ -175,21 +176,21 @@ export default function UserProfile(props){
     }
     function handleChangePasswordCaptchaChange(token){
         document.getElementById('uniqueRecaptchaChangePasswordToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyChangePasswordRecaptcha)
         },1000)
     }
     function handleChangeEmailCaptchaChange(token){  
         document.getElementById('uniqueRecaptchaChangeEmailToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyChangeEmailRecaptcha)
         },1000)
     }
     function handleEmailConfirmCaptchaChange(token){
         document.getElementById('uniqueRecaptchaConfirmEmailToken').value = token
-        console.log(token)
+        //console.log(token)
         setTimeout(function(){
             dispatch(verifyConfirmEmailRecaptcha)
         },1000)

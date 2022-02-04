@@ -161,13 +161,13 @@ export async function fetchWorms(dispatch){
     const user_id = document.getElementById('userID').value
     const body = JSON.stringify({user_id: user_id})
     const options = {headers: {'Authorization': bearer,'X-CSRF-Token': csrf} }
-    console.log("fetchworm options ")
-    console.log(options) 
+    //console.log("fetchworm options ")
+    //console.log(options) 
     const getWormsURL = '/api/v1/worms?user_id='+user_id
     await fetch(getWormsURL, options)
         .then((response) => response.json())
         .then((json) => {
-            console.log(json);
+            //console.log(json);
             if (json.status !== 500){
                 document.getElementById('token').value = json.new_token.token
                 document.getElementById('wormListLoader').style.visibility = 'hidden'
@@ -175,7 +175,7 @@ export async function fetchWorms(dispatch){
             } 
         })
         .catch((error) => {
-            console.log(error);
+            //console.log(error);
             error += error;
         })
 };
@@ -203,11 +203,11 @@ export async function favoriteWorm(){
     fetch(favWormURL, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
     })
     .catch((e) => {
-        console.log(e)
+        //console.log(e)
     })
 }
 export async function unfavoriteWorm(){
@@ -234,11 +234,11 @@ export async function unfavoriteWorm(){
     fetch(favWormURL, options)
     .then((response) => response.json())
     .then((json) => {
-        console.log(json)
+        //console.log(json)
         document.getElementById('token').value = json.new_token.token
     })
     .catch((e) => {
-        console.log(e)
+        //console.log(e)
     })
 }
 export async function deleteWorm(){
@@ -265,11 +265,11 @@ export async function deleteWorm(){
     fetch(delWormUrl, options)
     .then(response => response.json())
     .then(json => {
-        console.log(json)
+        //console.log(json)
     })
     .catch((e) => {
         var string_e = JSON.stringify(e)
-        console.log(e)
+        //console.log(e)
     })
 }
 

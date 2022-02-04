@@ -386,6 +386,17 @@ section > div > h2 {margin-bottom: 1.5em;}
     .visible{visibility: visible !important;}
     .hidden{visibility: hidden !important; display: none !important;}
 @media only screen and (max-width: 800px) {
+    .socialsIconsOuterDiv,.socialsIconsInnerDiv{
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    .stickToTop{
+        top: 12vh !important;
+    }
     canvas {
       width: 90vw !important;
       height: 38vh !important;
@@ -404,7 +415,7 @@ section > div > h2 {margin-bottom: 1.5em;}
     #mainHeader{
         font-size: 2rem !important;
     }
-    #mainCanvas{touch-action: none;}
+    #mainCanvas{touch-action: pinch-zoom;}
     .forgotResetPassword{
         width: 100vw !important;
         margin-top: 4rem;
