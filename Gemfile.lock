@@ -282,7 +282,6 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
-  x64-mingw32
 
 DEPENDENCIES
   awesome_print
