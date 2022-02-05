@@ -13,6 +13,9 @@
  *= require_tree .
  *= require_self
  */
+ *{
+     font-family: arial;
+ }
  html{
      background: black;
      color: black;
