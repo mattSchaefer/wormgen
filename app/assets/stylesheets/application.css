@@ -19,6 +19,7 @@
  html{
      background: black;
      color: black;
+     overflow-x: hidden;
  }
  body{background: black;}
  h2{
@@ -485,7 +486,7 @@ section > div > h2 {margin-bottom: 1.5em;}
         transition: .2s ease-in;
     }
     #header-bar{
-        margin-left: -15px;
+        margin-left: -4vw;
     }
     .aNoteSectionRevealed{
         background-position-x: -57vw !important;
