@@ -219,9 +219,11 @@ export default function Login(props){
         payload.username = username;
         payload.password = password;
         dispatch(login)
-        scroll.scrollMore(50)
+        scroll.scrollMore(25)
         setTimeout(function(){
-            
+            if(screen.width < 1000)
+                toggleMobileMenuDisplay()
+            scroll.scrollMore(75)
             dispatch(fetchWorms)
         },3000)
     }
@@ -419,7 +421,7 @@ export default function Login(props){
                             <TextField id="token" disabled value={state.current_user_token} onChange={() => dispatch(fetchWorms)} style={dontDisplay} />
                             <TextField id="userID" disabled value={state.current_user_id} style={dontDisplay} />
                         </button>
-                        <div style={flex} className="mobile-flex-col-full-width nav-links" id="nav">
+                        <div style={flex} className="mobile-flex-col-full-width nav-links visible" id="nav">
                             <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('generate_worms')}  tabindex="0" role="button">Generate Worms</button>
                             <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('favorite_worms')} tabindex="0" role="button">The Collection</button>
                             <button className="btn-grad2 nav-button" style={headLink} onClick={() => headLinkClick('why_were_here')} tabindex="0" role="button">What We Want</button>
