@@ -198,10 +198,10 @@ export default function Login(props){
             smooth: 'easeInOutQuint',
             duration: 336,
             delay: 0,
-            offset: -1000,
+            offset: -72,
             isDynamic: true
         }
-        scroll.scrollTo('footer', options)
+        scroll.scrollToTop(options)
     }
     function logInSignUpHover(event, which){
         //dispatch(logInSignUpHover(which))
