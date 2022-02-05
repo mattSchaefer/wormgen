@@ -2,13 +2,13 @@ class UserMailer < ApplicationMailer
     def forgot_password_email
         @email = params[:email]
         @forgot_token = params[:forgot_token]
-        mail(to: @email, subject: 'wormcreate password reset')
+        mail(to: @email, subject: 'friendlywormfarm password reset')
     end
     def reset_email_email
         @new_email = params[:new_email]
         @reset_token = params[:reset_token]
         @old_email = params[:old_email]
-        mail(to: @new_email, subject: 'wormcreate account email change')
+        mail(to: @new_email, subject: 'friendlywormfarm account email change')
     end
     def activate_account_email
         @username = params[:username]
