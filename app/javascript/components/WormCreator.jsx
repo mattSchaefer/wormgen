@@ -150,7 +150,8 @@ export default class WormCreator extends React.Component{
         };
         sketch.saveWorm = (e) => {
             if(this.props.wormCreateCaptchaVerified == 'yes'){
-                document.getElementById('saveWormButton').setAttribute('disabled', "disabled")
+                //document.getElementById('saveWormButton').setAttribute('disabled', "disabled")
+                document.getElementById('saveWormButton').style.visibility = 'hidden';
                 document.getElementById('wormCreateLoader').style.visibility = 'visible';
                 const img = canvas.get();
                 img.save(sketch.frameCount, '.png');
@@ -196,10 +197,12 @@ export default class WormCreator extends React.Component{
             .then((response) => response.json())
             .then((json) => {
                 //console.log(json)
-                document.getElementById('token').value = json.new_token.token
+                //document.getElementById('token').value = json.new_token.token
                 this.props.dispatch(fetchWorms)
                 document.getElementById('new-worm-name').value = ''
                 document.getElementById('wormCreateLoader').style.visibility = 'hidden';
+                document.getElementById('saveWormButton').style.visibility = 'visible';//('disabled', '');
+                //document.getElementById('saveWormButton').removeAttribute('disabled')//.setAttribute('disabled', "disabled")
             })
             .catch((e) => {
                 //console.log(e)
@@ -237,7 +240,7 @@ export default class WormCreator extends React.Component{
                         {
                             this.props.currentUserActivated == 'yes' && this.props.currentUser != 'anon' &&
                             <span style={buttonContainer} className="wormCreateButtonContainer">
-                                <Button className="btn-grad revealable" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton" disabled={ (this.props.wormCurrentlySaving == 'yes' || !document.getElementById('new-worm-name').value) ? true : false} >save worm</Button>
+                                <Button className="btn-grad revealable" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.saveWorm(e)} id="saveWormButton" >save worm</Button>
                                 <Button className="btn-grad revealable" variant="contained" color="primary" style={saveWormButton} onClick={(e) => this.myP5.exportWorm(e)} id="exportWormButton">export worm</Button>
                                 <div id="wormCreateLoader" className="loader">
                                     <div className="circle load1 whiteBG" />

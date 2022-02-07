@@ -149,8 +149,8 @@ export default function Home(props){
     const usr_prof_active = useSelector(profile_user_is_activated)
     const user_active = usr_active == 'yes' || usr_prof_active == 'yes' ? 'yes' : 'no'
     const rcaptcha_state = useSelector(reCaptchaState)
-    const worm_currently_saving = useSelector(saveWormRequestPending)
-    const worm_finished_saving = useSelector(saveWormRequestFinished)
+    var worm_currently_saving = useSelector(saveWormRequestPending)
+    var worm_finished_saving = useSelector(saveWormRequestFinished)
     var view1 = useSelector(view)
     var last_scroll_top = 0
     var last_scroll_bottom = 2000

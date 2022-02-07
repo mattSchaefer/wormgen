@@ -169,7 +169,7 @@ export async function fetchWorms(dispatch){
         .then((json) => {
             //console.log(json);
             if (json.status !== 500){
-                document.getElementById('token').value = json.new_token.token
+              //  document.getElementById('token').value = json.new_token.token
                 document.getElementById('wormListLoader').style.visibility = 'hidden'
                 dispatch(addMultiWormsToList(json.worms))
             } 

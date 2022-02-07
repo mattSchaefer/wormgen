@@ -15,6 +15,7 @@ export default function NewWormAttrs(props){
             <TextField id="new-worm-name"  className="revealable" label="worm name" placeholder="untitled" style={alignSelfCenter} />
             <span className="revealable" >Worm Creator: {props.user}</span>
             <span className="revealable" >Created around: {new Date(Date.now()).toLocaleDateString()}</span>
+            <span>**only 1 worm per rcaptcha verification. patience is a virtue.</span>
         </form>
     )
 }

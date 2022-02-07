@@ -38,7 +38,7 @@ module Token
         Rails.application.secrets.secret_key_base
     end
     def expiration_frame
-        600
+        6000
     end
     protected
         def jwt_expired(exception)
